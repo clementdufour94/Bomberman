@@ -9,22 +9,29 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HelloApplication extends Application {
 
-    static final int WIDTH = 700;
-    static final int HEIGHT = 700;
+    static final int WIDTH = 850;
+    static final int HEIGHT = 800;
     Scene sceneMenu;
     Stage primaryStage;
     Group groupGame;
+    List<Rectangle> listPoint;
+    List<Rectangle> listPoint2;
+    List<Rectangle> listPoint3;
     Scene sceneGame;
     Circle bomberman;
     @Override
@@ -57,22 +64,195 @@ public class HelloApplication extends Application {
 
             }
         });
+        handleGameEvent();
 
     }
 
 
     private Group initializeGroupGame() {
         Group group = new Group();
-        bomberman = new Circle(50, 50, 15);
-        bomberman.setFill(Color.YELLOW);
 
+        listPoint = new ArrayList<Rectangle>();
+        Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
+        for(int i = 10; i < HEIGHT; i = i + 80){
+            for(int j = 10; j < WIDTH; j = j + 80){
+                boolean createOk = true;
+
+
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall));
+                    listPoint.add(point);
+
+
+                }
+            }
+
+        }for (Rectangle p : listPoint) {
+
+            group.getChildren().add(p);
+        }
+
+        //Création Mur cassable Height
+        listPoint2 = new ArrayList<Rectangle>();
+        Image wall2 = new Image("http://images.shoutwiki.com/bomberpedia/thumb/a/af/HardBlock.png/200px-HardBlock.png", false);
+        for(int i = 50; i < HEIGHT; i = i + 80){
+            for(int j = 10; j < WIDTH; j = j + 80){
+                boolean createOk = true;
+
+
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall2));
+                    listPoint2.add(point);
+
+                }
+            }
+
+        }for (Rectangle p : listPoint2) {
+
+            group.getChildren().add(p);
+        }
+
+        //Création Mur cassable Width
+        listPoint3 = new ArrayList<Rectangle>();
+        for(int i = 50; i < HEIGHT; i = i + 80){
+            for(int j = 50; j < WIDTH; j = j + 80){
+                boolean createOk = true;
+
+
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall2));
+                    listPoint3.add(point);
+
+                }
+            }
+
+        }for (Rectangle p : listPoint3) {
+
+            group.getChildren().add(p);
+        }
+        bomberman = new Circle(70,30,13);
+        //bomberman = new Rectangle(60, 20, 20,20);
+        bomberman.setFill(Color.YELLOW);
         group.getChildren().add(bomberman);
 
 
+
         return group;
+    }
+    private void handleGameEvent() {
+        sceneGame.setOnKeyPressed((KeyEvent event) -> {
+            if (event.getText().isEmpty())
+                return;
+            char keyEntered = event.getText().toUpperCase().charAt(0);
+
+            boolean isMouvOk = true;
+            switch (keyEntered){
+                case 'Z' :
+
+                    for (Node node : groupGame.getChildren()) {
+                        if( node instanceof Rectangle){
+                            Rectangle r = ((Rectangle) node);
+                            if((bomberman.getCenterX()>= r.getX() && bomberman.getCenterX()<=r.getX()+r.getWidth())){
+                                if(bomberman.getCenterY()-bomberman.getRadius() <= r.getY() + r.getHeight() && bomberman.getCenterY()>=r.getY()){
+                                    isMouvOk = false;
+                                }
+                            }
+                        }
+                    }
+                    if(isMouvOk){
+                        if (bomberman.getCenterY()- bomberman.getRadius() <= 0) {
+                            bomberman.setCenterY(30);
+                        }
+
+
+                        bomberman.setCenterY(bomberman.getCenterY() - bomberman.getRadius());
+                    }
+                    break;
+                case 'S' :
+
+
+                    //isMouvOk = true;
+                    for (Node node : groupGame.getChildren()) {
+                        if( node instanceof Rectangle){
+                            Rectangle r = ((Rectangle) node);
+                            if((bomberman.getCenterX()>= r.getX() && bomberman.getCenterX()<=r.getX()+r.getWidth())){
+                                if(bomberman.getCenterY() <= r.getY() + r.getHeight() &&
+                                        bomberman.getCenterY()+ bomberman.getRadius()>=r.getY()){
+
+                                    isMouvOk = false;
+                                }
+                            }
+                        }
+                    }
+                    if(isMouvOk) {
+                        if (bomberman.getCenterY() >= HEIGHT) {
+                            bomberman.setCenterY(0 - bomberman.getRadius());
+                        }
+
+                        bomberman.setCenterY(bomberman.getCenterY() + bomberman.getRadius());
+                    }
+                    break;
+                case 'Q' :
+
+
+                    //isMouvOk = true;
+                    for (Node node : groupGame.getChildren()) {
+                        if( node instanceof Rectangle){
+                            Rectangle r = ((Rectangle) node);
+                            if(bomberman.getCenterY() <= r.getY() + r.getHeight() &&
+                                    bomberman.getCenterY()>=r.getY()){
+                                if((bomberman.getCenterX()>= r.getX() && bomberman.getCenterX()-bomberman.getRadius()<=r.getX()+r.getWidth())){
+                                    isMouvOk = false;
+                                }
+                            }
+                        }
+                    }
+                    if(isMouvOk) {
+                        if (bomberman.getCenterX() <= 0) {
+                            bomberman.setCenterX(WIDTH + bomberman.getRadius());
+                        }
+
+                        bomberman.setCenterX(bomberman.getCenterX() - bomberman.getRadius());
+                    }
+                    break;
+                case 'D' :
+
+
+                    //isMouvOk = true;
+                    for (Node node : groupGame.getChildren()) {
+                        if( node instanceof Rectangle){
+                            Rectangle r = ((Rectangle) node);
+                            if(bomberman.getCenterY() <= r.getY() + r.getHeight() &&
+                                    bomberman.getCenterY()>=r.getY()){
+                                if((bomberman.getCenterX()+bomberman.getRadius()>= r.getX() && bomberman.getCenterX()-bomberman.getRadius()<=r.getX())){
+                                    isMouvOk = false;
+                                }
+                            }
+                        }
+                    }
+                    if(isMouvOk) {
+                        if (bomberman.getCenterX() >= WIDTH) {
+                            bomberman.setCenterX(0 - bomberman.getRadius());
+                        }
+
+                        bomberman.setCenterX(bomberman.getCenterX() + bomberman.getRadius());
+                    }
+                    break;
+
+
+            }
+        });
     }
 
     public static void main(String[] args) {
         launch();
     }
 }
+
+
+
+
+

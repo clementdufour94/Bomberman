@@ -1,6 +1,8 @@
 package com.example.bomberman;
 
-import javafx.animation.Animation;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,10 +24,13 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+
 
 public class HelloApplication extends Application {
 
@@ -39,9 +44,14 @@ public class HelloApplication extends Application {
     List<Rectangle> listPoint3;
     Scene sceneGame;
     Circle bomberman;
-
     static int bombint = 4;
     Text bombes;
+    Group group;
+
+    ImageView bombeviewgif;
+    Timeline tl;
+    Timer timer;
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -52,6 +62,10 @@ public class HelloApplication extends Application {
         Button buttonRegle = new Button("Règle");
         Button buttonQuitter = new Button("Quitter");
         Group menuPrincipal = new Group();
+
+
+        tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
+        tl.setCycleCount(Timeline.INDEFINITE);
 
         stage.setTitle("Bomberman!");
         menuPrincipal.setLayoutX(WIDTH/2);
@@ -67,6 +81,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(ActionEvent event) {
                 primaryStage.setScene(sceneGame);
+                tl.play();
 
 
 
@@ -77,9 +92,16 @@ public class HelloApplication extends Application {
 
     }
 
+    private void run(){
+
+        //la on ou va mettre les ennemies et les déplacments
+
+
+    }
+
 
     private Group initializeGroupGame() {
-        Group group = new Group();
+        group = new Group();
 
         Image bombepng = new Image("https://cdn.discordapp.com/attachments/951092669969485864/953590274670616636/Wallpaperkiss_2375844.jpg", false);
         ImageView bombeview = new ImageView(bombepng);
@@ -90,6 +112,12 @@ public class HelloApplication extends Application {
         bombeview.setPreserveRatio(true);
         group.getChildren().add(bombeview);
 
+        Image bombegif = new Image("https://c.tenor.com/fTzhgn0hB54AAAAC/bomber-man.gif",false);
+        bombeviewgif = new ImageView(bombegif);
+        bombeviewgif.setFitWidth(70);
+        bombeviewgif.setFitHeight(70);
+        bombeviewgif.setPreserveRatio(true);
+
 
         bombes = new Text(900,45, String.valueOf(bombint));
         bombes.setFill(Color.WHITE);
@@ -99,22 +127,22 @@ public class HelloApplication extends Application {
         listPoint = new ArrayList<Rectangle>();
         Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
         for(int i = 90; i < HEIGHT; i = i + 80){
-        for(int j = 10; j < WIDTH; j = j + 80){
-        boolean createOk = true;
+            for(int j = 10; j < WIDTH; j = j + 80){
+                boolean createOk = true;
 
 
-              if(createOk){
-                  Rectangle point = new Rectangle(j,i,40, 40);
-                  point.setFill(new ImagePattern(wall));
-                  listPoint.add(point);
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall));
+                    listPoint.add(point);
 
 
-              }
-          }
+                }
+            }
 
         }for (Rectangle p : listPoint) {
 
-          group.getChildren().add(p);
+            group.getChildren().add(p);
         }
 
         //Création Mur cassable Height
@@ -141,21 +169,21 @@ public class HelloApplication extends Application {
         //Création Mur cassable Width
         listPoint3 = new ArrayList<Rectangle>();
         for(int i = 50; i < HEIGHT; i = i + 80){
-        for(int j = 50; j < WIDTH; j = j + 80){
-        boolean createOk = true;
+            for(int j = 50; j < WIDTH; j = j + 80){
+                boolean createOk = true;
 
 
-        if(createOk){
-        Rectangle point = new Rectangle(j,i,40, 40);
-        point.setFill(new ImagePattern(wall2));
-        listPoint3.add(point);
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall2));
+                    listPoint3.add(point);
 
-        }
-        }
+                }
+            }
 
         }for (Rectangle p : listPoint3) {
 
-        group.getChildren().add(p);
+            group.getChildren().add(p);
         }
         bomberman = new Circle(70,30,13);
         //bomberman = new Rectangle(60, 20, 20,20);
@@ -167,6 +195,7 @@ public class HelloApplication extends Application {
         return group;
     }
     private void handleGameEvent() {
+
         sceneGame.setOnKeyPressed((KeyEvent event) -> {
             if (event.getText().isEmpty())
                 return;
@@ -198,7 +227,7 @@ public class HelloApplication extends Application {
                 case 'S' :
 
 
-                    //isMouvOk = true;
+
                     for (Node node : groupGame.getChildren()) {
                         if( node instanceof Rectangle){
                             Rectangle r = ((Rectangle) node);
@@ -222,7 +251,7 @@ public class HelloApplication extends Application {
                 case 'Q' :
 
 
-                    //isMouvOk = true;
+
                     for (Node node : groupGame.getChildren()) {
                         if( node instanceof Rectangle){
                             Rectangle r = ((Rectangle) node);
@@ -245,7 +274,7 @@ public class HelloApplication extends Application {
                 case 'D' :
 
 
-                    //isMouvOk = true;
+
                     for (Node node : groupGame.getChildren()) {
                         if( node instanceof Rectangle){
                             Rectangle r = ((Rectangle) node);
@@ -266,17 +295,35 @@ public class HelloApplication extends Application {
                     }
                     break;
 
+                case 'B':
+                    new Timeline(new KeyFrame(
+                            Duration.seconds(3),
+                            ae->{
+                                group.getChildren().remove(bombeviewgif);
+
+                            })).play();
+
+
+                    if(bombint >0){
+                        group.getChildren().add(bombeviewgif);
+                        bombeviewgif.setY(bomberman.getCenterY());
+                        bombeviewgif.setX(bomberman.getCenterX());
+
+
+                    }
+
+
+                    break;
+
 
             }
         });
+
+
     }
+
 
     public static void main(String[] args) {
         launch();
     }
 }
-
-
-
-
-

@@ -10,12 +10,17 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -34,6 +39,10 @@ public class HelloApplication extends Application {
     List<Rectangle> listPoint3;
     Scene sceneGame;
     Circle bomberman;
+
+    static int bombint = 4;
+    Text bombes;
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
@@ -72,6 +81,20 @@ public class HelloApplication extends Application {
     private Group initializeGroupGame() {
         Group group = new Group();
 
+        Image bombepng = new Image("https://cdn.discordapp.com/attachments/951092669969485864/953590274670616636/Wallpaperkiss_2375844.jpg", false);
+        ImageView bombeview = new ImageView(bombepng);
+        bombeview.setY(40);
+        bombeview.setX(870);
+        bombeview.setFitWidth(70);
+        bombeview.setFitHeight(70);
+        bombeview.setPreserveRatio(true);
+        group.getChildren().add(bombeview);
+
+
+        bombes = new Text(900,45, String.valueOf(bombint));
+        bombes.setFill(Color.WHITE);
+        bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        group.getChildren().add(bombes);
 
         listPoint = new ArrayList<Rectangle>();
         Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);

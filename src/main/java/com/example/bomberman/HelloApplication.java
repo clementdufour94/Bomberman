@@ -72,25 +72,26 @@ public class HelloApplication extends Application {
     private Group initializeGroupGame() {
         Group group = new Group();
 
+
         listPoint = new ArrayList<Rectangle>();
         Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
-        for(int i = 10; i < HEIGHT; i = i + 80){
-            for(int j = 10; j < WIDTH; j = j + 80){
-                boolean createOk = true;
+        for(int i = 90; i < HEIGHT; i = i + 80){
+        for(int j = 10; j < WIDTH; j = j + 80){
+        boolean createOk = true;
 
 
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall));
-                    listPoint.add(point);
+              if(createOk){
+                  Rectangle point = new Rectangle(j,i,40, 40);
+                  point.setFill(new ImagePattern(wall));
+                  listPoint.add(point);
 
 
-                }
-            }
+              }
+          }
 
         }for (Rectangle p : listPoint) {
 
-            group.getChildren().add(p);
+          group.getChildren().add(p);
         }
 
         //Création Mur cassable Height
@@ -117,21 +118,21 @@ public class HelloApplication extends Application {
         //Création Mur cassable Width
         listPoint3 = new ArrayList<Rectangle>();
         for(int i = 50; i < HEIGHT; i = i + 80){
-            for(int j = 50; j < WIDTH; j = j + 80){
-                boolean createOk = true;
+        for(int j = 50; j < WIDTH; j = j + 80){
+        boolean createOk = true;
 
 
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall2));
-                    listPoint3.add(point);
+        if(createOk){
+        Rectangle point = new Rectangle(j,i,40, 40);
+        point.setFill(new ImagePattern(wall2));
+        listPoint3.add(point);
 
-                }
-            }
+        }
+        }
 
         }for (Rectangle p : listPoint3) {
 
-            group.getChildren().add(p);
+        group.getChildren().add(p);
         }
         bomberman = new Circle(70,30,13);
         //bomberman = new Rectangle(60, 20, 20,20);
@@ -163,8 +164,8 @@ public class HelloApplication extends Application {
                         }
                     }
                     if(isMouvOk){
-                        if (bomberman.getCenterY()- bomberman.getRadius() <= 0) {
-                            bomberman.setCenterY(30);
+                        if (bomberman.getCenterY()- bomberman.getRadius() <= 20) {
+                            bomberman.setCenterY(20 + bomberman.getRadius());
                         }
 
 
@@ -189,7 +190,7 @@ public class HelloApplication extends Application {
                     }
                     if(isMouvOk) {
                         if (bomberman.getCenterY() >= HEIGHT) {
-                            bomberman.setCenterY(0 - bomberman.getRadius());
+                            bomberman.setCenterY(HEIGHT - bomberman.getRadius());
                         }
 
                         bomberman.setCenterY(bomberman.getCenterY() + bomberman.getRadius());
@@ -211,8 +212,8 @@ public class HelloApplication extends Application {
                         }
                     }
                     if(isMouvOk) {
-                        if (bomberman.getCenterX() <= 0) {
-                            bomberman.setCenterX(WIDTH + bomberman.getRadius());
+                        if (bomberman.getCenterX() <= 25 + bomberman.getRadius()) {
+                            bomberman.setCenterX(25 + bomberman.getRadius());
                         }
 
                         bomberman.setCenterX(bomberman.getCenterX() - bomberman.getRadius());
@@ -234,8 +235,8 @@ public class HelloApplication extends Application {
                         }
                     }
                     if(isMouvOk) {
-                        if (bomberman.getCenterX() >= WIDTH) {
-                            bomberman.setCenterX(0 - bomberman.getRadius());
+                        if (bomberman.getCenterX() >= 840 - bomberman.getRadius()) {
+                            bomberman.setCenterX(840 - bomberman.getRadius());
                         }
 
                         bomberman.setCenterX(bomberman.getCenterX() + bomberman.getRadius());

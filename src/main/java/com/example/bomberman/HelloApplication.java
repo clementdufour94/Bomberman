@@ -323,6 +323,7 @@ public class HelloApplication extends Application {
                     new Timeline(new KeyFrame(
                             Duration.seconds(3),
                             ae->{
+                                isNextPositionAWall(groupGame, listPoint,listPoint2,listPoint3,bombeviewgif);
                                 group.getChildren().remove(bombeviewgif);
 
                             })).play();

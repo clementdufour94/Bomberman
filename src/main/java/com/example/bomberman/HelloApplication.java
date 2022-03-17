@@ -92,6 +92,30 @@ public class HelloApplication extends Application {
 
     }
 
+    private void isNextPositionAWall(Group group, List<Rectangle> listPoint, List<Rectangle> listPoint2, List<Rectangle> listPoint3, ImageView bombeviewgif){
+        Rectangle wallTempToRemove =null;
+        for(Rectangle wall : listPoint2){
+            if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
+                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
+                    || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
+                    ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
+            ){
+                wallTempToRemove = wall;
+                group.getChildren().remove(wall);
+            }
+            if(wallTempToRemove!=null){
+                listPoint2.remove(wallTempToRemove);
+            }
+
+
+
+        }
+
+    }
+
     private void run(){
 
         //la on ou va mettre les ennemies et les déplacments

@@ -51,6 +51,8 @@ public class HelloApplication extends Application {
     ImageView bombeviewgif;
     Timeline tl;
     Timer timer;
+    Group groupregele;
+    Scene sceneregle;
 
 
     @Override
@@ -76,12 +78,27 @@ public class HelloApplication extends Application {
         stage.setScene(sceneMenu);
         stage.show();
         groupGame = initializeGroupGame();
+        groupregele = new Group();
+        Text text = new Text("tere");
         sceneGame = new Scene(groupGame, WIDTH, HEIGHT, Color.GRAY);
         buttonJouer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 primaryStage.setScene(sceneGame);
                 tl.play();
+
+
+
+
+            }
+        });
+        buttonRegle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                groupregele.getChildren().add(text);
+                primaryStage.setScene(sceneregle);
+
 
 
 

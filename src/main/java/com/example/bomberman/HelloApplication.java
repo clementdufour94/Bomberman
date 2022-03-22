@@ -45,12 +45,16 @@ public class HelloApplication extends Application {
     Scene sceneGame;
     Circle bomberman;
     static int bombint = 4;
+    static int heartint=3;
     Text bombes;
     Group group;
 
+
     ImageView bombeviewgif;
+    ImageView heartview;
     Timeline tl;
     Timer timer;
+    Text heart;
 
 
     @Override
@@ -103,14 +107,25 @@ public class HelloApplication extends Application {
     private Group initializeGroupGame() {
         group = new Group();
 
-        Image bombepng = new Image("https://cdn.discordapp.com/attachments/951092669969485864/953590274670616636/Wallpaperkiss_2375844.jpg", false);
+        Image bombepng = new Image("https://img2.freepng.fr/20171217/e0e/bomb-png-5a371a4e3e3042.0391952015135606542547.jpg", false);
+        Image heartpng = new Image("https://e7.pngegg.com/pngimages/935/758/png-clipart-minecraft-video-game-health-game-result-text-rectangle.png", false);
+
         ImageView bombeview = new ImageView(bombepng);
-        bombeview.setY(40);
-        bombeview.setX(870);
+        bombeview.setY(60);
+        bombeview.setX(880);
         bombeview.setFitWidth(70);
         bombeview.setFitHeight(70);
         bombeview.setPreserveRatio(true);
         group.getChildren().add(bombeview);
+
+
+        ImageView heartview = new ImageView(heartpng);
+        heartview.setY(220);
+        heartview.setX(880);
+        heartview.setFitWidth(70);
+        heartview.setFitHeight(70);
+        heartview.setPreserveRatio(true);
+        group.getChildren().add(heartview);
 
         Image bombegif = new Image("https://www.informatiquegifs.com/explosion/gifs-explosion-8.gif",false);
         bombeviewgif = new ImageView(bombegif);
@@ -123,6 +138,14 @@ public class HelloApplication extends Application {
         bombes.setFill(Color.WHITE);
         bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
         group.getChildren().add(bombes);
+
+
+        heart = new Text(900, 200, String.valueOf(heartint));
+        heart.setFill(Color.WHITE);
+        heart.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        group.getChildren().add(heart);
+
+        timer = new Timer();
 
         listPoint = new ArrayList<Rectangle>();
         Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);

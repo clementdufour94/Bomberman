@@ -1,5 +1,6 @@
 package com.example.bomberman;
 
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -28,35 +29,41 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
+import java.util.Random;
 
 
 public class HelloApplication extends Application {
 
-    static final int WIDTH = 850;
+   static final int WIDTH = 1080;
     static final int HEIGHT = 800;
     Scene sceneMenu;
     Stage primaryStage;
     Group groupGame;
     List<Rectangle> listPoint;
-    List<Rectangle> listPoint2;
-    List<Rectangle> listPoint3;
+    List<Rectangle> listWall2;
+    List<Rectangle> listWall3;
     Scene sceneGame;
+    List<Circle>listEnnemy;
     Circle bomberman;
     static int bombint = 4;
     Text bombes;
     Group group;
+    Integer timerBomb = 0;
 
     ImageView bombeviewgif;
     Timeline tl;
-    Timer timer;
+    Image bombegif;
+    Boolean isAllowedBomb =true;
+    Integer truc = 0;
+
+
 
 
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         primaryStage = stage;
-        Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT) ;
+        Scene scene = new Scene(fxmlLoader.load(), 850, HEIGHT) ;
         Button buttonJouer = new Button("Jouer");
         Button buttonRegle = new Button("Règle");
         Button buttonQuitter = new Button("Quitter");
@@ -66,8 +73,11 @@ public class HelloApplication extends Application {
         tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
         tl.setCycleCount(Timeline.INDEFINITE);
 
+
+
+
         stage.setTitle("Bomberman!");
-        menuPrincipal.setLayoutX(WIDTH/2);
+        menuPrincipal.setLayoutX(850/2);
         menuPrincipal.setLayoutY(HEIGHT/2);
         VBox vbox = new VBox(buttonJouer, buttonRegle, buttonQuitter);
         menuPrincipal.getChildren().add(vbox);
@@ -93,106 +103,80 @@ public class HelloApplication extends Application {
 
     private void run(){
 
+
+
+        Random r = new Random();
+        Circle tempennemyToRemove =null;
+        for(Circle ennemy:listEnnemy){
+            boolean chasseOn = false;
+            if((Math.abs(ennemy.getCenterX() - bomberman.getCenterX()) +
+                    Math.abs(ennemy.getCenterY() - bomberman.getCenterY())) < 500){
+                chasseOn = true;
+            }
+
+            if(chasseOn){
+                double difX = ennemy.getCenterX() - bomberman.getCenterX();
+                double difY = ennemy.getCenterY() - bomberman.getCenterY();
+                if(Math.abs(difX) < Math.abs(difY)){
+                    if(difY>0) ennemy.setCenterY(ennemy.getCenterY()-12);
+                    else ennemy.setCenterY(ennemy.getCenterY()+12);
+                }
+                else {
+                    if (difX>0) ennemy.setCenterX(ennemy.getCenterX()-12);
+                    else ennemy.setCenterX(ennemy.getCenterX()+12);
+                }
+            }
+            else{
+                switch (r.nextInt(4)){
+                    case 0:
+                        if(ennemy.getCenterX() +12 < 850){
+                            ennemy.setCenterX(ennemy.getCenterX()+12);
+                        }
+                        break;
+                    case 1:
+                        if (ennemy.getCenterX() - 12 > 0) {
+                            ennemy.setCenterX(ennemy.getCenterX() - 12);
+                        }
+                        break;
+                    case 2:
+                        if (ennemy.getCenterY() - 12 > 0) {
+                            ennemy.setCenterY(ennemy.getCenterY() - 12);
+                        }
+                        break;
+                    case 3:
+                        if (ennemy.getCenterY() + 12 < HEIGHT) {
+                            ennemy.setCenterY(ennemy.getCenterY() + 12);
+                        }
+                        break;
+
+                }
+            }
+            if(ennemy.getCenterX()==bomberman.getCenterX() & ennemy.getCenterY()==bomberman.getCenterY()){
+                tl.pause();
+                System.out.println("Game Over");
+            }
+        }
+
         //la on ou va mettre les ennemies et les déplacments
 
+        timerBomb = timerBomb +1;
+        System.out.println(timerBomb);
+
+        if(truc +11==timerBomb & truc >11){
+
+            System.out.println("Boum");
+            isNextPositionAWall(groupGame, listPoint, listWall2, listWall3,bombeviewgif);
+            group.getChildren().remove(bombeviewgif);
+
+
+
+            isAllowedBomb =true;
+
+        }
+
 
     }
 
-
-    private Group initializeGroupGame() {
-        group = new Group();
-
-        Image bombepng = new Image("https://cdn.discordapp.com/attachments/951092669969485864/953590274670616636/Wallpaperkiss_2375844.jpg", false);
-        ImageView bombeview = new ImageView(bombepng);
-        bombeview.setY(40);
-        bombeview.setX(870);
-        bombeview.setFitWidth(70);
-        bombeview.setFitHeight(70);
-        bombeview.setPreserveRatio(true);
-        group.getChildren().add(bombeview);
-
-        Image bombegif = new Image("https://www.informatiquegifs.com/explosion/gifs-explosion-8.gif",false);
-        bombeviewgif = new ImageView(bombegif);
-        bombeviewgif.setFitWidth(40);
-        bombeviewgif.setFitHeight(40);
-        bombeviewgif.setPreserveRatio(true);
-
-
-        bombes = new Text(900,45, String.valueOf(bombint));
-        bombes.setFill(Color.WHITE);
-        bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
-        group.getChildren().add(bombes);
-
-        listPoint = new ArrayList<Rectangle>();
-        Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
-        for(int i = 90; i < HEIGHT; i = i + 80){
-            for(int j = 10; j < WIDTH; j = j + 80){
-                boolean createOk = true;
-
-
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall));
-                    listPoint.add(point);
-
-
-                }
-            }
-
-        }for (Rectangle p : listPoint) {
-
-            group.getChildren().add(p);
-        }
-
-        //Création Mur cassable Height
-        listPoint2 = new ArrayList<Rectangle>();
-        Image wall2 = new Image("http://images.shoutwiki.com/bomberpedia/thumb/a/af/HardBlock.png/200px-HardBlock.png", false);
-        for(int i = 50; i < HEIGHT; i = i + 80){
-            for(int j = 10; j < WIDTH; j = j + 80){
-                boolean createOk = true;
-
-
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall2));
-                    listPoint2.add(point);
-
-                }
-            }
-
-        }for (Rectangle p : listPoint2) {
-
-            group.getChildren().add(p);
-        }
-
-        //Création Mur cassable Width
-        listPoint3 = new ArrayList<Rectangle>();
-        for(int i = 50; i < HEIGHT; i = i + 80){
-            for(int j = 50; j < WIDTH; j = j + 80){
-                boolean createOk = true;
-
-
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall2));
-                    listPoint3.add(point);
-
-                }
-            }
-
-        }for (Rectangle p : listPoint3) {
-
-            group.getChildren().add(p);
-        }
-        bomberman = new Circle(70,30,13);
-        //bomberman = new Rectangle(60, 20, 20,20);
-        bomberman.setFill(Color.YELLOW);
-        group.getChildren().add(bomberman);
-
-
-
-        return group;
-    }
     private void handleGameEvent() {
 
         sceneGame.setOnKeyPressed((KeyEvent event) -> {
@@ -201,6 +185,41 @@ public class HelloApplication extends Application {
             char keyEntered = event.getText().toUpperCase().charAt(0);
 
             boolean isMouvOk = true;
+            if(isAllowedBomb=true){
+                switch(keyEntered){
+                    case 'B':
+
+                        truc = timerBomb;
+                        if (bombint > 0) {
+                            group.getChildren().add(bombeviewgif);
+                            bombeviewgif.setY(bomberman.getCenterY() - bomberman.getRadius());
+                            bombeviewgif.setX(bomberman.getCenterX() - bomberman.getRadius());
+
+
+                        }
+                        isAllowedBomb =false;
+
+
+                        //new Timeline(new KeyFrame(
+                        //Duration.seconds(3),
+                        //ae->{
+
+
+                        //isNextPositionAWall(groupGame, listPoint,listPoint2,listPoint3,bombeviewgif);
+                        //group.getChildren().remove(bombeviewgif);
+                        //System.out.println("hey");
+
+
+                        //})).play();
+
+
+
+
+
+                        break;
+
+                }
+            }
             switch (keyEntered){
                 case 'Z' :
 
@@ -215,8 +234,8 @@ public class HelloApplication extends Application {
                         }
                     }
                     if(isMouvOk){
-                        if (bomberman.getCenterY()- bomberman.getRadius() <= 20) {
-                            bomberman.setCenterY(20 + bomberman.getRadius());
+                        if (bomberman.getCenterY()- bomberman.getRadius() <= 12) {
+                            bomberman.setCenterY(18 + bomberman.getRadius());
                         }
 
 
@@ -263,8 +282,8 @@ public class HelloApplication extends Application {
                         }
                     }
                     if(isMouvOk) {
-                        if (bomberman.getCenterX() <= 25 + bomberman.getRadius()) {
-                            bomberman.setCenterX(25 + bomberman.getRadius());
+                        if (bomberman.getCenterX() <= 22 + bomberman.getRadius()) {
+                            bomberman.setCenterX(22 + bomberman.getRadius());
                         }
 
                         bomberman.setCenterX(bomberman.getCenterX() - bomberman.getRadius());
@@ -294,31 +313,9 @@ public class HelloApplication extends Application {
                     }
                     break;
 
-                case 'B':
-                    new Timeline(new KeyFrame(
-                            Duration.seconds(4),
-                            ae->{
-
-
-                                isNextPositionAWall(groupGame, listPoint,listPoint2,listPoint3,bombeviewgif);
-                                group.getChildren().remove(bombeviewgif);
 
 
 
-                            })).play();
-
-
-                    if(bombint >0){
-                        group.getChildren().add(bombeviewgif);
-                        bombeviewgif.setY(bomberman.getCenterY()-bomberman.getRadius());
-                        bombeviewgif.setX(bomberman.getCenterX()-bomberman.getRadius());
-
-
-
-                    }
-
-
-                    break;
 
 
             }
@@ -326,6 +323,130 @@ public class HelloApplication extends Application {
 
 
     }
+
+
+    private Group initializeGroupGame() {
+        group = new Group();
+
+
+        //Affichage de la bombe pour savoir combien de bombes il nous reste
+        Image bombepng = new Image("https://cdn.discordapp.com/attachments/951092669969485864/953590274670616636/Wallpaperkiss_2375844.jpg", false);
+        ImageView bombeview = new ImageView(bombepng);
+        bombeview.setY(40);
+        bombeview.setX(870);
+        bombeview.setFitWidth(70);
+        bombeview.setFitHeight(70);
+        bombeview.setPreserveRatio(true);
+        group.getChildren().add(bombeview);
+        //Affichage du nombre de bombe restant
+        bombes = new Text(900,45, String.valueOf(bombint));
+        bombes.setFill(Color.WHITE);
+        bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        group.getChildren().add(bombes);
+
+        //Affichage de la bombe sur le terrain
+        bombegif = new Image("https://www.informatiquegifs.com/explosion/gifs-explosion-8.gif",false);
+        bombeviewgif = new ImageView(bombegif);
+        bombeviewgif.setFitWidth(40);
+        bombeviewgif.setFitHeight(40);
+        bombeviewgif.setPreserveRatio(true);
+
+        //Affichage des ennemies
+        Circle ennemy1 = new Circle(94,54,15,Color.RED);
+        Circle ennemy2 = new Circle(700,700,15,Color.RED);
+        Circle ennemy3 = new Circle(700,700,15,Color.RED);
+        Circle ennemy4 = new Circle(700,700,15,Color.RED);
+        listEnnemy = new ArrayList<Circle>();
+        listEnnemy.add(ennemy1);
+        listEnnemy.add(ennemy2);
+        listEnnemy.add(ennemy3);
+        listEnnemy.add(ennemy4);
+
+        group.getChildren().add(ennemy1);
+        group.getChildren().add(ennemy2);
+        group.getChildren().add(ennemy3);
+        group.getChildren().add(ennemy4);
+        //Il faut que la position x et y des ennemies soient un multiple de 70+12 pour x et 30 +12 pour y exemple(82,42) ou (94,54
+
+        //Afficage Bomberman
+        bomberman = new Circle(70,30,12);
+        bomberman.setFill(Color.YELLOW);
+        group.getChildren().add(bomberman);
+
+
+
+
+
+        //Création du mur pas cassable
+        listPoint = new ArrayList<Rectangle>();
+        Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
+        for(int i = 90; i < HEIGHT; i = i + 80){
+            for(int j = 10; j < 850; j = j + 80){
+                boolean createOk = true;
+
+
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall));
+                    listPoint.add(point);
+
+
+                }
+            }
+
+        }for (Rectangle p : listPoint) {
+
+            group.getChildren().add(p);
+        }
+
+        //Création Mur cassable Height
+        listWall2 = new ArrayList<Rectangle>();
+        Image wall2 = new Image("http://images.shoutwiki.com/bomberpedia/thumb/a/af/HardBlock.png/200px-HardBlock.png", false);
+        for(int i = 50; i < HEIGHT; i = i + 80){
+            for(int j = 10; j < 850; j = j + 80){
+                boolean createOk = true;
+
+
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall2));
+                    listWall2.add(point);
+
+
+                }
+            }
+
+        }for (Rectangle p : listWall2) {
+
+            group.getChildren().add(p);
+        }
+
+        //Création Mur cassable Width
+        listWall3 = new ArrayList<Rectangle>();
+        for(int i = 50; i < HEIGHT; i = i + 80){
+            for(int j = 50; j < 850; j = j + 80){
+                boolean createOk = true;
+
+
+                if(createOk){
+                    Rectangle point = new Rectangle(j,i,40, 40);
+                    point.setFill(new ImagePattern(wall2));
+                    listWall3.add(point);
+
+                }
+            }
+
+        }for (Rectangle p : listWall3) {
+
+            group.getChildren().add(p);
+        }
+
+
+
+
+        return group;
+    }
+
     private void isNextPositionAWall(Group group, List<Rectangle> listPoint, List<Rectangle> listPoint2, List<Rectangle> listPoint3, ImageView bombeviewgif){
         Rectangle wallTempToRemove =null;
         for(Rectangle wall : listPoint2){

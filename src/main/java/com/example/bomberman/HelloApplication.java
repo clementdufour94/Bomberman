@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -26,6 +28,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class HelloApplication extends Application {
    static final int WIDTH = 1080;
     static final int HEIGHT = 800;
     Scene sceneMenu;
+    Scene sceneChoosePlayer;
     Stage primaryStage;
     Group groupGame;
     List<Rectangle> listPoint;
@@ -55,6 +60,8 @@ public class HelloApplication extends Application {
     Image bombegif;
     Boolean isAllowedBomb =true;
     Integer truc = 0;
+    String couleur = "";
+    FileInputStream input;
 
 
 
@@ -76,22 +83,127 @@ public class HelloApplication extends Application {
 
 
 
+
+
         stage.setTitle("Bomberman!");
         menuPrincipal.setLayoutX(850/2);
         menuPrincipal.setLayoutY(HEIGHT/2);
         VBox vbox = new VBox(buttonJouer, buttonRegle, buttonQuitter);
         menuPrincipal.getChildren().add(vbox);
         sceneMenu = new Scene(menuPrincipal, WIDTH, HEIGHT, Color.GRAY);
+
         stage.setScene(sceneMenu);
         stage.show();
         groupGame = initializeGroupGame();
         sceneGame = new Scene(groupGame, WIDTH, HEIGHT, Color.GRAY);
+        //Ici
+
+
+        FileInputStream inputBlanc  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBlanc.png");
+        Image skinBlanc = new Image(inputBlanc,340,340,true,false);
+        ImageView skinBlancview = new ImageView(skinBlanc);
+
+        FileInputStream inputBleu  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBleu.png");
+        Image skinBleu = new Image(inputBleu,340,340,true,false);
+        ImageView skinBleuview = new ImageView(skinBleu);
+
+        FileInputStream inputJaune  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanJaune.png");
+        Image skinJaune = new Image(inputJaune,340,340,true,false);
+        ImageView skinJauneview = new ImageView(skinJaune);
+
+        FileInputStream inputNoir  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanNoir.png");
+        Image skinNoir = new Image(inputNoir,340,340,true,false);
+        ImageView skinNoirview = new ImageView(skinNoir);
+
+        FileInputStream inputRouge  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\BombermanRouge.png");
+        Image skinRouge = new Image(inputRouge,340,340,true,false);
+        ImageView skinRougeview = new ImageView(skinRouge);
+
+        FileInputStream inputVert  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanVert.png");
+        Image skinVert = new Image(inputVert,340,340,true,false);
+        ImageView skinVertview = new ImageView(skinVert);
+
+        HBox vboxChoose = new HBox(skinBlancview, skinBleuview, skinJauneview, skinNoirview, skinRougeview,skinVertview);
+        vboxChoose.setPrefSize(10,10);
+        Group groupChoose = new Group();
+        groupChoose.getChildren().add(vboxChoose);
+        sceneChoosePlayer = new Scene(groupChoose,WIDTH,HEIGHT,Color.GRAY);
+
+        skinBlancview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Perso blanc choisie");
+                couleur = "blanc";
+                primaryStage.setScene(sceneGame);
+                tl.play();
+                event.consume();
+            }
+        });
+        skinBleuview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Perso bleu choisie");
+                couleur = "bleu";
+                primaryStage.setScene(sceneGame);
+                tl.play();
+                event.consume();
+            }
+        });
+        skinJauneview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Perso jaune choisie");
+                couleur = "jaune";
+                primaryStage.setScene(sceneGame);
+                tl.play();
+                event.consume();
+            }
+        });
+        skinNoirview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Perso noir choisie");
+                couleur = "noir";
+                primaryStage.setScene(sceneGame);
+                tl.play();
+                event.consume();
+            }
+        });
+        skinRougeview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Perso rouge choisie");
+                couleur = "rouge";
+                primaryStage.setScene(sceneGame);
+                tl.play();
+                event.consume();
+            }
+        });
+        skinVertview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Perso Vert choisie");
+                couleur = "vert";
+                primaryStage.setScene(sceneGame);
+                tl.play();
+                event.consume();
+            }
+        });
+
+
+
         buttonJouer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                primaryStage.setScene(sceneGame);
-                tl.play();
-
+                //primaryStage.setScene(sceneGame);
+                //tl.play();
+                primaryStage.setScene(sceneChoosePlayer);
 
 
 
@@ -325,7 +437,7 @@ public class HelloApplication extends Application {
     }
 
 
-    private Group initializeGroupGame() {
+    private Group initializeGroupGame() throws FileNotFoundException {
         group = new Group();
 
 
@@ -368,9 +480,33 @@ public class HelloApplication extends Application {
         group.getChildren().add(ennemy4);
         //Il faut que la position x et y des ennemies soient un multiple de 70+12 pour x et 30 +12 pour y exemple(82,42) ou (94,54
 
+        switch (couleur){
+            case "blanc":
+                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBlanc.png");
+                    break;
+            case "bleu":
+                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBleu.png");
+               break;
+            case "jaune":
+                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanJaune.png");
+                break;
+            case "noir":
+                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanNoir.png");
+                break;
+            case "rouge":
+                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanRouge.png");
+                break;
+            case "vert":
+                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanVert.png");
+                break;
+        }
+
+
         //Afficage Bomberman
         bomberman = new Circle(70,30,12);
-        bomberman.setFill(Color.YELLOW);
+
+        Image bombermanSkin = new Image(input);
+        bomberman.setFill(new ImagePattern(bombermanSkin));
         group.getChildren().add(bomberman);
 
 

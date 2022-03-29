@@ -53,7 +53,7 @@ public class HelloApplication extends Application {
     static int bombint = 4;
     Text bombes;
     Group group;
-    Integer timerBomb = 0;
+    Integer timerBomb =0;
     Integer timer = 0;
 
     Integer secondeUnite = 0;
@@ -64,11 +64,13 @@ public class HelloApplication extends Application {
     Integer minute=0;
     Text timerSeparator;
 
+    Integer iTimerfix =0;
+
     ImageView bombeviewgif;
     Timeline tl;
     Image bombegif;
     Boolean isAllowedBomb =true;
-    Integer truc = 0;
+
     String couleur = "";
     FileInputStream input;
     Text timertextSeconde;
@@ -96,6 +98,7 @@ public class HelloApplication extends Application {
 
         timertextSeconde =new Text();
         timertextSecondeDizaine = new Text();
+        input = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
 
         timertextMinute =new Text();
         timertextMinuteDizaine = new Text();
@@ -173,6 +176,7 @@ public class HelloApplication extends Application {
                 System.out.println("Perso blanc choisie");
 
                 couleur = "blanc";
+                input = inputBlanc;
                 primaryStage.setScene(sceneGame);
                 tl.play();
                 event.consume();
@@ -185,6 +189,7 @@ public class HelloApplication extends Application {
                 System.out.println("Perso bleu choisie");
 
                 couleur = "bleu";
+                input=inputBleu;
                 primaryStage.setScene(sceneGame);
                 tl.play();
                 event.consume();
@@ -197,6 +202,7 @@ public class HelloApplication extends Application {
                 System.out.println("Perso jaune choisie");
 
                 couleur = "jaune";
+                input=inputJaune;
                 primaryStage.setScene(sceneGame);
                 tl.play();
                 event.consume();
@@ -209,6 +215,7 @@ public class HelloApplication extends Application {
                 System.out.println("Perso noir choisie");
 
                 couleur = "noir";
+                input = inputNoir;
                 primaryStage.setScene(sceneGame);
                 tl.play();
                 event.consume();
@@ -221,6 +228,7 @@ public class HelloApplication extends Application {
                 System.out.println("Perso rouge choisie");
 
                 couleur = "rouge";
+                input=inputRouge;
                 primaryStage.setScene(sceneGame);
                 tl.play();
                 event.consume();
@@ -257,6 +265,7 @@ public class HelloApplication extends Application {
     }
 
     private void run(){
+        System.out.println(couleur);
 
 
 
@@ -314,8 +323,9 @@ public class HelloApplication extends Application {
 
         //la on ou va mettre les ennemies et les déplacments
 
-        timerBomb = timerBomb +1;
+
         timer = timer +1;
+        iTimerfix +=1;
         Timer();
         System.out.println(seconde);
 
@@ -357,11 +367,12 @@ public class HelloApplication extends Application {
         timerSeparator.setFill(Color.RED);
         group.getChildren().add(timerSeparator);
 
-        if(truc +11==timerBomb & truc >11){
+        if(timerBomb +4== seconde & seconde >4){
 
             System.out.println("Boum");
-            isNextPositionAWall(groupGame, listPoint, listWall2, listWall3,bombeviewgif);
             group.getChildren().remove(bombeviewgif);
+            isNextPositionAWall(groupGame,listPoint,listWall3, listWall2,bombeviewgif);
+
 
 
 
@@ -374,10 +385,10 @@ public class HelloApplication extends Application {
 
     }
     private void Timer(){
-        if(secondeUnite==9){
-            secondeDizaine+=1;
-            secondeUnite=0;
-        }
+
+
+
+
         if(secondeDizaine==6){
             minuteUnite+=1;
             secondeDizaine=0;
@@ -390,17 +401,15 @@ public class HelloApplication extends Application {
             seconde +=1;
             if(secondeUnite!=9){
                 secondeUnite+=1;
-
             }
 
-
             timer=0;
-
         }
+        if(iTimerfix ==40){
+            secondeDizaine+=1;
+            secondeUnite=0;
+            iTimerfix =0;
 
-        if (seconde==60){
-            minute+=1;
-            seconde=0;
         }
 
     }
@@ -417,7 +426,7 @@ public class HelloApplication extends Application {
                 switch(keyEntered){
                     case 'B':
 
-                        truc = timerBomb;
+                        timerBomb =seconde;
                         if (bombint > 0) {
                             group.getChildren().add(bombeviewgif);
                             bombeviewgif.setY(bomberman.getCenterY() - bomberman.getRadius());
@@ -603,40 +612,13 @@ public class HelloApplication extends Application {
         //Il faut que la position x et y des ennemies soient un multiple de 70+12 pour x et 30 +12 pour y exemple(82,42) ou (94,54
 
 
-            input  = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
 
 
 
 
-        switch (couleur){
-        case "blanc":
-
-            input  = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
 
 
-        break;
-        case "bleu":
-            input  = new FileInputStream("src/Images/Bomberman/bombermanBleu.png");
 
-
-        break;
-        case "jaune":
-            input  = new FileInputStream("src/Images/Bomberman/bombermanJaune.png");
-
-        break;
-        case "noir":
-            input  = new FileInputStream("src/Images/Bomberman/bombermanNoir.png");
-
-        break;
-        case "rouge":
-            input  = new FileInputStream("src/Images/Bomberman/bombermanRouge.png");
-
-        break;
-        case "vert":
-            input  = new FileInputStream("src/Images/Bomberman/bombermanVert.png");
-
-        break;
-        }
 
 
 
@@ -723,7 +705,7 @@ public class HelloApplication extends Application {
         return group;
     }
 
-    private void isNextPositionAWall(Group group, List<Rectangle> listPoint, List<Rectangle> listWall2, List<Rectangle> listPoint3, ImageView bombeviewgif){
+    private void isNextPositionAWall(Group group,List<Rectangle> listPoint,List<Rectangle> listWall3,  List<Rectangle> listWall2, ImageView bombeviewgif){
         Rectangle wallTempToRemove =null;
         for(Rectangle wall : listWall2){
             if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
@@ -739,6 +721,44 @@ public class HelloApplication extends Application {
             }
             if(wallTempToRemove!=null){
                 listWall2.remove(wallTempToRemove);
+            }
+
+
+
+        }
+        for(Rectangle wall : listWall3){
+            if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
+                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
+                    || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
+                    ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
+            ){
+                wallTempToRemove = wall;
+                group.getChildren().remove(wall);
+            }
+            if(wallTempToRemove!=null){
+                listWall3.remove(wallTempToRemove);
+            }
+
+
+
+        }
+        for(Rectangle wall : listPoint){
+            if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
+                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
+                    || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
+                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
+                    ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
+            ){
+                wallTempToRemove = wall;
+                group.getChildren().remove(wall);
+            }
+            if(wallTempToRemove!=null){
+                listPoint.remove(wallTempToRemove);
             }
 
 

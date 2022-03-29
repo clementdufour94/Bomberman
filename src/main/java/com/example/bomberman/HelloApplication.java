@@ -54,6 +54,15 @@ public class HelloApplication extends Application {
     Text bombes;
     Group group;
     Integer timerBomb = 0;
+    Integer timer = 0;
+
+    Integer secondeUnite = 0;
+    Integer secondeDizaine =0;
+    Integer minuteUnite =0;
+    Integer minuteDizaine=0;
+    Integer seconde=0;
+    Integer minute=0;
+    Text timerSeparator;
 
     ImageView bombeviewgif;
     Timeline tl;
@@ -62,6 +71,10 @@ public class HelloApplication extends Application {
     Integer truc = 0;
     String couleur = "";
     FileInputStream input;
+    Text timertextSeconde;
+    Text timertextSecondeDizaine;
+    Text timertextMinute;
+    Text timertextMinuteDizaine;
 
 
 
@@ -79,6 +92,29 @@ public class HelloApplication extends Application {
 
         tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
         tl.setCycleCount(Timeline.INDEFINITE);
+
+
+        timertextSeconde =new Text();
+        timertextSecondeDizaine = new Text();
+
+        timertextMinute =new Text();
+        timertextMinuteDizaine = new Text();
+
+        timertextSeconde.setX(1000);
+        timertextSeconde.setY(400);
+
+        timertextSecondeDizaine.setX(980);
+        timertextSecondeDizaine.setY(400);
+
+         timerSeparator = new Text(":");
+         timerSeparator.setX(965);
+         timerSeparator.setY(400);
+
+        timertextMinute.setX(940);
+        timertextMinute.setY(400);
+
+        timertextMinuteDizaine.setX(920);
+        timertextMinuteDizaine.setY(400);
 
 
 
@@ -99,27 +135,27 @@ public class HelloApplication extends Application {
         //Ici
 
 
-        FileInputStream inputBlanc  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBlanc.png");
+        FileInputStream inputBlanc  = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
         Image skinBlanc = new Image(inputBlanc,340,340,true,false);
         ImageView skinBlancview = new ImageView(skinBlanc);
 
-        FileInputStream inputBleu  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBleu.png");
+        FileInputStream inputBleu  = new FileInputStream("src/Images/Bomberman/bombermanBleu.png");
         Image skinBleu = new Image(inputBleu,340,340,true,false);
         ImageView skinBleuview = new ImageView(skinBleu);
 
-        FileInputStream inputJaune  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanJaune.png");
+        FileInputStream inputJaune  = new FileInputStream("src/Images/Bomberman/bombermanJaune.png");
         Image skinJaune = new Image(inputJaune,340,340,true,false);
         ImageView skinJauneview = new ImageView(skinJaune);
 
-        FileInputStream inputNoir  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanNoir.png");
+        FileInputStream inputNoir  = new FileInputStream("src/Images/Bomberman/bombermanNoir.png");
         Image skinNoir = new Image(inputNoir,340,340,true,false);
         ImageView skinNoirview = new ImageView(skinNoir);
 
-        FileInputStream inputRouge  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\BombermanRouge.png");
+        FileInputStream inputRouge  = new FileInputStream("src/Images/Bomberman/BombermanRouge.png");
         Image skinRouge = new Image(inputRouge,340,340,true,false);
         ImageView skinRougeview = new ImageView(skinRouge);
 
-        FileInputStream inputVert  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanVert.png");
+        FileInputStream inputVert  = new FileInputStream("src/Images/Bomberman/bombermanVert.png");
         Image skinVert = new Image(inputVert,340,340,true,false);
         ImageView skinVertview = new ImageView(skinVert);
 
@@ -127,6 +163,7 @@ public class HelloApplication extends Application {
         vboxChoose.setPrefSize(10,10);
         Group groupChoose = new Group();
         groupChoose.getChildren().add(vboxChoose);
+
         sceneChoosePlayer = new Scene(groupChoose,WIDTH,HEIGHT,Color.GRAY);
 
         skinBlancview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -134,6 +171,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Perso blanc choisie");
+
                 couleur = "blanc";
                 primaryStage.setScene(sceneGame);
                 tl.play();
@@ -145,6 +183,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Perso bleu choisie");
+
                 couleur = "bleu";
                 primaryStage.setScene(sceneGame);
                 tl.play();
@@ -156,6 +195,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Perso jaune choisie");
+
                 couleur = "jaune";
                 primaryStage.setScene(sceneGame);
                 tl.play();
@@ -167,6 +207,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Perso noir choisie");
+
                 couleur = "noir";
                 primaryStage.setScene(sceneGame);
                 tl.play();
@@ -178,6 +219,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Perso rouge choisie");
+
                 couleur = "rouge";
                 primaryStage.setScene(sceneGame);
                 tl.play();
@@ -189,6 +231,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Perso Vert choisie");
+
                 couleur = "vert";
                 primaryStage.setScene(sceneGame);
                 tl.play();
@@ -272,7 +315,47 @@ public class HelloApplication extends Application {
         //la on ou va mettre les ennemies et les déplacments
 
         timerBomb = timerBomb +1;
-        System.out.println(timerBomb);
+        timer = timer +1;
+        Timer();
+        System.out.println(seconde);
+
+        //Affichage du timer
+
+        if(timertextSeconde != null && timertextSecondeDizaine!=null && timertextMinute!=null && timertextMinuteDizaine!=null){
+            group.getChildren().remove(timertextSeconde);
+            group.getChildren().remove(timertextSecondeDizaine);
+            group.getChildren().remove(timertextMinute);
+            group.getChildren().remove(timertextMinuteDizaine);
+            group.getChildren().remove(timerSeparator);
+
+        }
+
+        timertextSeconde.setText(String.valueOf(secondeUnite));
+        timertextSecondeDizaine.setText(String.valueOf(secondeDizaine));
+
+        timertextMinute.setText(String.valueOf(minuteUnite));
+        timertextMinuteDizaine.setText(String.valueOf(minuteDizaine));
+
+
+        timertextSeconde.setFont(Font.font(null,FontWeight.BOLD,36));
+        timertextSeconde.setFill(Color.RED);
+        group.getChildren().add(timertextSeconde);
+
+        timertextSecondeDizaine.setFont(Font.font(null,FontWeight.BOLD,36));
+        timertextSecondeDizaine.setFill(Color.RED);
+        group.getChildren().add(timertextSecondeDizaine);
+
+        timertextMinute.setFont(Font.font(null,FontWeight.BOLD,36));
+        timertextMinute.setFill(Color.RED);
+        group.getChildren().add(timertextMinute);
+
+        timertextMinuteDizaine.setFont(Font.font(null,FontWeight.BOLD,36));
+        timertextMinuteDizaine.setFill(Color.RED);
+        group.getChildren().add(timertextMinuteDizaine);
+
+        timerSeparator.setFont(Font.font(null,FontWeight.BOLD,36));
+        timerSeparator.setFill(Color.RED);
+        group.getChildren().add(timerSeparator);
 
         if(truc +11==timerBomb & truc >11){
 
@@ -284,8 +367,41 @@ public class HelloApplication extends Application {
 
             isAllowedBomb =true;
 
+
+
         }
 
+
+    }
+    private void Timer(){
+        if(secondeUnite==9){
+            secondeDizaine+=1;
+            secondeUnite=0;
+        }
+        if(secondeDizaine==6){
+            minuteUnite+=1;
+            secondeDizaine=0;
+        }
+        if (minuteUnite == 9) {
+            minuteDizaine+=1;
+            minuteUnite=0;
+        }
+        if (timer ==4){
+            seconde +=1;
+            if(secondeUnite!=9){
+                secondeUnite+=1;
+
+            }
+
+
+            timer=0;
+
+        }
+
+        if (seconde==60){
+            minute+=1;
+            seconde=0;
+        }
 
     }
 
@@ -456,6 +572,10 @@ public class HelloApplication extends Application {
         bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
         group.getChildren().add(bombes);
 
+
+
+
+
         //Affichage de la bombe sur le terrain
         bombegif = new Image("https://www.informatiquegifs.com/explosion/gifs-explosion-8.gif",false);
         bombeviewgif = new ImageView(bombegif);
@@ -464,42 +584,60 @@ public class HelloApplication extends Application {
         bombeviewgif.setPreserveRatio(true);
 
         //Affichage des ennemies
-        Circle ennemy1 = new Circle(94,54,15,Color.RED);
+        //Circle ennemy1 = new Circle(94,90,15,Color.RED);
         Circle ennemy2 = new Circle(700,700,15,Color.RED);
         Circle ennemy3 = new Circle(700,700,15,Color.RED);
         Circle ennemy4 = new Circle(700,700,15,Color.RED);
         listEnnemy = new ArrayList<Circle>();
-        listEnnemy.add(ennemy1);
+        //listEnnemy.add(ennemy1);
         listEnnemy.add(ennemy2);
         listEnnemy.add(ennemy3);
         listEnnemy.add(ennemy4);
 
-        group.getChildren().add(ennemy1);
+        //group.getChildren().add(ennemy1);
         group.getChildren().add(ennemy2);
         group.getChildren().add(ennemy3);
+
         group.getChildren().add(ennemy4);
+
         //Il faut que la position x et y des ennemies soient un multiple de 70+12 pour x et 30 +12 pour y exemple(82,42) ou (94,54
 
+
+            input  = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
+
+
+
+
         switch (couleur){
-            case "blanc":
-                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBlanc.png");
-                    break;
-            case "bleu":
-                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanBleu.png");
-               break;
-            case "jaune":
-                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanJaune.png");
-                break;
-            case "noir":
-                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanNoir.png");
-                break;
-            case "rouge":
-                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanRouge.png");
-                break;
-            case "vert":
-                input  = new FileInputStream("C:\\Users\\Clément\\IdeaProjects\\Bomberman\\src\\Images\\Bomberman\\bombermanVert.png");
-                break;
+        case "blanc":
+
+            input  = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
+
+
+        break;
+        case "bleu":
+            input  = new FileInputStream("src/Images/Bomberman/bombermanBleu.png");
+
+
+        break;
+        case "jaune":
+            input  = new FileInputStream("src/Images/Bomberman/bombermanJaune.png");
+
+        break;
+        case "noir":
+            input  = new FileInputStream("src/Images/Bomberman/bombermanNoir.png");
+
+        break;
+        case "rouge":
+            input  = new FileInputStream("src/Images/Bomberman/bombermanRouge.png");
+
+        break;
+        case "vert":
+            input  = new FileInputStream("src/Images/Bomberman/bombermanVert.png");
+
+        break;
         }
+
 
 
         //Afficage Bomberman
@@ -580,12 +718,14 @@ public class HelloApplication extends Application {
 
 
 
+
+
         return group;
     }
 
-    private void isNextPositionAWall(Group group, List<Rectangle> listPoint, List<Rectangle> listPoint2, List<Rectangle> listPoint3, ImageView bombeviewgif){
+    private void isNextPositionAWall(Group group, List<Rectangle> listPoint, List<Rectangle> listWall2, List<Rectangle> listPoint3, ImageView bombeviewgif){
         Rectangle wallTempToRemove =null;
-        for(Rectangle wall : listPoint2){
+        for(Rectangle wall : listWall2){
             if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
                     || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
                     || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
@@ -598,7 +738,7 @@ public class HelloApplication extends Application {
                 group.getChildren().remove(wall);
             }
             if(wallTempToRemove!=null){
-                listPoint2.remove(wallTempToRemove);
+                listWall2.remove(wallTempToRemove);
             }
 
 

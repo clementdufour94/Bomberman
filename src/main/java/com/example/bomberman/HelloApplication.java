@@ -1,12 +1,15 @@
 package com.example.bomberman;
 
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.css.Style;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -28,6 +32,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -48,6 +53,8 @@ public class HelloApplication extends Application {
     List<Rectangle> listWall2;
     List<Rectangle> listWall3;
     Scene sceneGame;
+    Scene scenePause;
+    Text Pause;
     List<Circle>listEnnemy;
     Circle bomberman;
     static int bombint = 4;
@@ -55,6 +62,7 @@ public class HelloApplication extends Application {
     Group group;
     Integer timerBomb =0;
     Integer timer = 0;
+    boolean gamePaused = true;
 
     Integer secondeUnite = 0;
     Integer secondeDizaine =0;
@@ -69,6 +77,7 @@ public class HelloApplication extends Application {
     ImageView bombeviewgif;
     Timeline tl;
     Image bombegif;
+
     Boolean isAllowedBomb =true;
 
     String couleur = "";
@@ -90,6 +99,13 @@ public class HelloApplication extends Application {
         Button buttonRegle = new Button("Règle");
         Button buttonQuitter = new Button("Quitter");
         Group menuPrincipal = new Group();
+        Pause = new Text("Jeux en pause appuyez sur P pour reprendre le jeux");
+        Pause.setFont(Font.font(null,FontWeight.BOLD,36));
+        Pause.setFill(Color.RED);
+        Pause.setY(400);
+        StackPane.setAlignment(Pause, Pos.CENTER);
+
+        
 
 
         tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
@@ -178,7 +194,9 @@ public class HelloApplication extends Application {
                 couleur = "blanc";
                 input = inputBlanc;
                 primaryStage.setScene(sceneGame);
+                gamePaused = false;
                 tl.play();
+
                 event.consume();
             }
         });
@@ -191,7 +209,9 @@ public class HelloApplication extends Application {
                 couleur = "bleu";
                 input=inputBleu;
                 primaryStage.setScene(sceneGame);
+                gamePaused = false;
                 tl.play();
+
                 event.consume();
             }
         });
@@ -204,6 +224,7 @@ public class HelloApplication extends Application {
                 couleur = "jaune";
                 input=inputJaune;
                 primaryStage.setScene(sceneGame);
+                gamePaused = false;
                 tl.play();
                 event.consume();
             }
@@ -217,6 +238,7 @@ public class HelloApplication extends Application {
                 couleur = "noir";
                 input = inputNoir;
                 primaryStage.setScene(sceneGame);
+                gamePaused = false;
                 tl.play();
                 event.consume();
             }
@@ -230,6 +252,7 @@ public class HelloApplication extends Application {
                 couleur = "rouge";
                 input=inputRouge;
                 primaryStage.setScene(sceneGame);
+                gamePaused = false;
                 tl.play();
                 event.consume();
             }
@@ -242,6 +265,7 @@ public class HelloApplication extends Application {
 
                 couleur = "vert";
                 primaryStage.setScene(sceneGame);
+                gamePaused = false;
                 tl.play();
                 event.consume();
             }
@@ -252,8 +276,8 @@ public class HelloApplication extends Application {
         buttonJouer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //primaryStage.setScene(sceneGame);
-                //tl.play();
+
+
                 primaryStage.setScene(sceneChoosePlayer);
 
 
@@ -421,7 +445,7 @@ public class HelloApplication extends Application {
                 return;
             char keyEntered = event.getText().toUpperCase().charAt(0);
 
-            boolean isMouvOk = true;
+            boolean isMouvOk = !gamePaused;
             if(isAllowedBomb=true){
                 switch(keyEntered){
                     case 'B':
@@ -549,6 +573,20 @@ public class HelloApplication extends Application {
                         bomberman.setCenterX(bomberman.getCenterX() + bomberman.getRadius());
                     }
                     break;
+                case'P':
+                    if(tl.getStatus() == Animation.Status.RUNNING){
+                        group.getChildren().add(Pause);
+                        tl.pause();
+                        gamePaused = true;
+
+                    }
+                    else if(tl.getStatus() == Animation.Status.PAUSED){
+                        group.getChildren().remove(Pause);
+                        tl.play();
+                        gamePaused = false;
+                    }
+
+                    break;
 
 
 
@@ -567,7 +605,8 @@ public class HelloApplication extends Application {
 
 
         //Affichage de la bombe pour savoir combien de bombes il nous reste
-        Image bombepng = new Image("https://cdn.discordapp.com/attachments/951092669969485864/953590274670616636/Wallpaperkiss_2375844.jpg", false);
+        FileInputStream bombe = new FileInputStream("src/Images/Bombes/bombesprite.png");
+        Image bombepng = new Image(bombe);
         ImageView bombeview = new ImageView(bombepng);
         bombeview.setY(40);
         bombeview.setX(870);
@@ -575,6 +614,19 @@ public class HelloApplication extends Application {
         bombeview.setFitHeight(70);
         bombeview.setPreserveRatio(true);
         group.getChildren().add(bombeview);
+
+        //Affichage des coeurs pour savoir combien de vie il nous reste
+        FileInputStream heart = new FileInputStream("src/Images/Heart/heart.png");
+        Image heartpng = new Image(heart);
+        ImageView heartview = new ImageView(heartpng);
+        heartview.setY(100);
+        heartview.setX(870);
+        heartview.setFitHeight(70);
+        heartview.setFitWidth(70);
+        heartview.setPreserveRatio(true);
+        group.getChildren().add(heartview);
+
+
         //Affichage du nombre de bombe restant
         bombes = new Text(900,45, String.valueOf(bombint));
         bombes.setFill(Color.WHITE);

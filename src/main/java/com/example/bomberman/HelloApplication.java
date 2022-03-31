@@ -6,22 +6,18 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.css.Style;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -36,7 +32,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -54,7 +49,8 @@ public class HelloApplication extends Application {
     Scene sceneChoosePlayer;
     Stage primaryStage;
     Group groupGame;
-    List<Rectangle> listPoint;
+    List<List> listWalls;
+    List<Rectangle> listWall;
     List<Rectangle> listWall2;
     List<Rectangle> listWall3;
     Scene sceneGame;
@@ -62,12 +58,22 @@ public class HelloApplication extends Application {
     List<Circle>listEnnemy;
     Circle bomberman;
     static int bombint = 4;
+    static  int heartint =3;
+    public int score=0;
     Text bombes;
+    Text hearts;
+    Text scores;
     Group group;
     Integer timerBomb =0;
     Integer timer = 0;
     boolean gamePaused = true;
+
     MediaPlayer mediaPlayer;
+    MediaPlayer playerHover;
+    MediaPlayer playerExplosion;
+    TextArea saisiePseudo;
+
+
 
     Integer secondeUnite = 0;
     Integer secondeDizaine =0;
@@ -76,12 +82,15 @@ public class HelloApplication extends Application {
     Integer seconde=0;
     Integer minute=0;
     Text timerSeparator;
+    Boolean truc;
 
     Integer iTimerfix =0;
 
     ImageView bombeviewgif;
     Timeline tl;
     Timeline explosion;
+    Timeline bombe;
+    Timeline coin;
     Image bombegif;
 
     Boolean isAllowedBomb =true;
@@ -103,7 +112,19 @@ public class HelloApplication extends Application {
     ImageView explosion6View;
     ImageView explosion0View;
     Integer variable = 0;
+
+    ImageView coin1View;
+    ImageView coin2View;
+    ImageView coin3View;
+    ImageView coin4View;
+    ImageView coin5View;
+    ImageView coin6View;
+
+    Integer variableCoin = 0;
     Reflection reflection;
+    ImageView buttonRestartView;
+
+
 
 
 
@@ -111,6 +132,7 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         primaryStage = stage;
         Scene scene = new Scene(fxmlLoader.load(), 850, HEIGHT) ;
@@ -126,9 +148,20 @@ public class HelloApplication extends Application {
 
         tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
         explosion = new Timeline(new KeyFrame(Duration.millis(180),e->runexplosion()));
+        coin = new Timeline(new KeyFrame(Duration.millis(150),e->runCoin()));
+        coin.setCycleCount(Timeline.INDEFINITE);
         explosion.setCycleCount(Timeline.INDEFINITE);
         explosion.play();
         tl.setCycleCount(Timeline.INDEFINITE);
+        bombe = new Timeline(new KeyFrame(Duration.seconds(1),e->runbombe()));
+        bombe.setCycleCount(1);
+
+
+        saisiePseudo = new TextArea();
+        saisiePseudo.setPrefHeight(50);
+        saisiePseudo.setPrefWidth(50);
+
+
 
 
         timertextSeconde =new Text();
@@ -139,20 +172,20 @@ public class HelloApplication extends Application {
         timertextMinuteDizaine = new Text();
 
         timertextSeconde.setX(1000);
-        timertextSeconde.setY(400);
+        timertextSeconde.setY(45);
 
         timertextSecondeDizaine.setX(980);
-        timertextSecondeDizaine.setY(400);
+        timertextSecondeDizaine.setY(45);
 
         timerSeparator = new Text(":");
         timerSeparator.setX(965);
-        timerSeparator.setY(400);
+        timerSeparator.setY(45);
 
         timertextMinute.setX(940);
-        timertextMinute.setY(400);
+        timertextMinute.setY(45);
 
         timertextMinuteDizaine.setX(920);
-        timertextMinuteDizaine.setY(400);
+        timertextMinuteDizaine.setY(45);
 
 
 
@@ -197,7 +230,10 @@ public class HelloApplication extends Application {
         HBox vboxChoose = new HBox(skinBlancview, skinBleuview, skinJauneview, skinNoirview, skinRougeview,skinVertview);
         vboxChoose.setPrefSize(10,10);
         Group groupChoose = new Group();
-        groupChoose.getChildren().add(vboxChoose);
+
+
+        VBox vboxtest = new VBox(vboxChoose,saisiePseudo);
+        groupChoose.getChildren().add(vboxtest);
 
 
 
@@ -248,13 +284,56 @@ public class HelloApplication extends Application {
         explosion6View.setY(-100);
         explosion6View.setEffect(reflection);
 
-
         FileInputStream inputExplosion0 = new FileInputStream("src/Images/Bombes/bombesprite.png");
         Image explosion0 = new Image(inputExplosion0,340,340,true,false);
          explosion0View = new ImageView(explosion0);
          explosion0View.setX(-350);
         explosion0View.setY(-100);
          explosion0View.setEffect(reflection);
+
+
+
+        FileInputStream inputCoin1 = new FileInputStream("src/Images/Coins/star coin rotate 1.png");
+        Image coin1 = new Image(inputCoin1,70,70,true,false);
+        coin1View = new ImageView(coin1);
+        coin1View.setX(880);
+        coin1View.setY(300);
+        coin1View.setEffect(reflection);
+
+        FileInputStream inputCoin2 = new FileInputStream("src/Images/Coins/star coin rotate 2.png");
+        Image coin2 = new Image(inputCoin2,70,70,true,false);
+        coin2View = new ImageView(coin2);
+        coin2View.setX(880);
+        coin2View.setY(300);
+        coin2View.setEffect(reflection);
+
+        FileInputStream inputCoin3 = new FileInputStream("src/Images/Coins/star coin rotate 3.png");
+        Image coin3 = new Image(inputCoin3,70,70,true,false);
+        coin3View = new ImageView(coin3);
+        coin3View.setX(880);
+        coin3View.setY(300);
+        coin3View.setEffect(reflection);
+
+        FileInputStream inputCoin4 = new FileInputStream("src/Images/Coins/star coin rotate 4.png");
+        Image coin4 = new Image(inputCoin4,70,70,true,false);
+        coin4View = new ImageView(coin4);
+        coin4View.setX(880);
+        coin4View.setY(300);
+        coin4View.setEffect(reflection);
+
+        FileInputStream inputCoin5 = new FileInputStream("src/Images/Coins/star coin rotate 5.png");
+        Image coin5 = new Image(inputCoin5,70,70,true,false);
+        coin5View = new ImageView(coin5);
+        coin5View.setX(880);
+        coin5View.setY(300);
+        coin5View.setEffect(reflection);
+
+        FileInputStream inputCoin6 = new FileInputStream("src/Images/Coins/star coin rotate 6.png");
+        Image coin6 = new Image(inputCoin6,70,70,true,false);
+        coin6View = new ImageView(coin6);
+        coin6View.setX(880);
+        coin6View.setY(300);
+        coin6View.setEffect(reflection);
 
 
 
@@ -274,6 +353,7 @@ public class HelloApplication extends Application {
                 primaryStage.setScene(sceneGame);
                 gamePaused = false;
                 tl.play();
+                coin.play();
 
                 event.consume();
             }
@@ -289,6 +369,7 @@ public class HelloApplication extends Application {
                 primaryStage.setScene(sceneGame);
                 gamePaused = false;
                 tl.play();
+                coin.play();
 
                 event.consume();
             }
@@ -304,6 +385,7 @@ public class HelloApplication extends Application {
                 primaryStage.setScene(sceneGame);
                 gamePaused = false;
                 tl.play();
+                coin.play();
                 event.consume();
             }
         });
@@ -318,6 +400,7 @@ public class HelloApplication extends Application {
                 primaryStage.setScene(sceneGame);
                 gamePaused = false;
                 tl.play();
+                coin.play();
                 event.consume();
             }
         });
@@ -332,6 +415,7 @@ public class HelloApplication extends Application {
                 primaryStage.setScene(sceneGame);
                 gamePaused = false;
                 tl.play();
+                coin.play();
                 event.consume();
             }
         });
@@ -345,6 +429,7 @@ public class HelloApplication extends Application {
                 primaryStage.setScene(sceneGame);
                 gamePaused = false;
                 tl.play();
+                coin.play();
                 event.consume();
             }
         });
@@ -356,11 +441,28 @@ public class HelloApplication extends Application {
 
     }
     public void music(){
-        //String s ="01Sushi.mp3";
-        //Media h = new Media(Paths.get(s).toUri().toString());
-        //mediaPlayer = new MediaPlayer(h);
-        //mediaPlayer.play();
+        String s ="screen.mp3";
+        Media h = new Media(Paths.get(s).toUri().toString());
+        mediaPlayer = new MediaPlayer(h);
+        mediaPlayer.play();
+
     }
+    public void musicHover(){
+        String s = "rollover.mp3";
+        Media h = new Media(Paths.get(s).toUri().toString());
+        playerHover = new MediaPlayer(h);
+        playerHover.setCycleCount(1);
+        playerHover.play();
+    }
+
+    public void musicExplosion(){
+        String s = "explosion.mp3";
+        Media h = new Media(Paths.get(s).toUri().toString());
+        playerExplosion = new MediaPlayer(h);
+        playerExplosion.setCycleCount(1);
+        playerExplosion.play();
+    }
+
     private Scene buttonPause() throws FileNotFoundException{
         groupPause = new Group();
 
@@ -394,15 +496,9 @@ public class HelloApplication extends Application {
                 gamePaused = false;
             }
         });
-        buttonRestartView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
-            @Override
-            public void handle(MouseEvent event) {
 
-               primaryStage.setScene(sceneMenu);
 
-            }
-        });
         buttonExitView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
             @Override
@@ -463,8 +559,75 @@ public class HelloApplication extends Application {
                 Platform.exit();
             }
         });
+        buttonExitView.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                musicHover();
+            }
+        });
+        buttonPlayView.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                musicHover();
+            }
+        });
+        buttonSettingView.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                musicHover();
+            }
+        });
+
 
         return groupMenu;
+    }
+    private void runCoin(){
+
+        if (variableCoin==6){
+
+            groupGame.getChildren().remove(coin6View);
+            variableCoin =0;
+
+
+        }
+        if (variableCoin==5){
+            groupGame.getChildren().remove(coin5View);
+            groupGame.getChildren().add(coin6View);
+
+        }
+        if (variableCoin==4){
+            groupGame.getChildren().remove(coin4View);
+            groupGame.getChildren().add(coin5View);
+
+        }
+        if (variableCoin==3){
+            groupGame.getChildren().remove(coin3View);
+            groupGame.getChildren().add(coin4View);
+
+        }
+        if (variableCoin==2){
+            groupGame.getChildren().remove(coin2View);
+            groupGame.getChildren().add(coin3View);
+
+
+        }
+        if (variableCoin==1){
+            groupGame.getChildren().remove(coin1View);
+            groupGame.getChildren().add(coin2View);
+
+        }
+        if(variableCoin==0){
+            groupGame.getChildren().add(coin1View);
+
+        }
+        variableCoin+=1;
+
     }
     private void runexplosion(){
         System.out.println(variable);
@@ -508,6 +671,14 @@ public class HelloApplication extends Application {
             groupMenu.getChildren().add(explosion0View);
         }
         variable+=1;
+
+    }
+    private void runbombe(){
+
+            musicExplosion();
+            group.getChildren().remove(bombeviewgif);
+            isNextPositionAWall(groupGame, listWall,listWall3, listWall2,bombeviewgif);
+            isAllowedBomb =true;
 
     }
 
@@ -614,20 +785,8 @@ public class HelloApplication extends Application {
         timerSeparator.setFill(Color.RED);
         group.getChildren().add(timerSeparator);
 
-        if(timerBomb +4== seconde & seconde >4){
-
-            System.out.println("Boum");
-            group.getChildren().remove(bombeviewgif);
-            isNextPositionAWall(groupGame,listPoint,listWall3, listWall2,bombeviewgif);
 
 
-
-
-            isAllowedBomb =true;
-
-
-
-        }
 
 
     }
@@ -673,6 +832,11 @@ public class HelloApplication extends Application {
                 switch(keyEntered){
                     case 'B':
 
+
+                        timerBomb =seconde;
+                        bombe.play();
+
+
                         timerBomb =seconde;
                         if (bombint > 0) {
                             group.getChildren().add(bombeviewgif);
@@ -706,6 +870,8 @@ public class HelloApplication extends Application {
             }
             switch (keyEntered){
                 case 'Z' :
+
+
 
                     for (Node node : groupGame.getChildren()) {
                         if( node instanceof Rectangle){
@@ -832,18 +998,19 @@ public class HelloApplication extends Application {
         FileInputStream bombe = new FileInputStream("src/Images/Bombes/bombesprite.png");
         Image bombepng = new Image(bombe);
         ImageView bombeview = new ImageView(bombepng);
-        bombeview.setY(40);
-        bombeview.setX(870);
-        bombeview.setFitWidth(70);
-        bombeview.setFitHeight(70);
+        bombeview.setY(70);
+        bombeview.setX(850);
+        bombeview.setFitWidth(120);
+        bombeview.setFitHeight(120);
         bombeview.setPreserveRatio(true);
+
         group.getChildren().add(bombeview);
 
         //Affichage des coeurs pour savoir combien de vie il nous reste
         FileInputStream heart = new FileInputStream("src/Images/Heart/heart.png");
         Image heartpng = new Image(heart);
         ImageView heartview = new ImageView(heartpng);
-        heartview.setY(100);
+        heartview.setY(200);
         heartview.setX(870);
         heartview.setFitHeight(70);
         heartview.setFitWidth(70);
@@ -852,10 +1019,21 @@ public class HelloApplication extends Application {
 
 
         //Affichage du nombre de bombe restant
-        bombes = new Text(900,45, String.valueOf(bombint));
+        bombes = new Text(960,160, String.valueOf(bombint));
         bombes.setFill(Color.WHITE);
-        bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
         group.getChildren().add(bombes);
+
+        hearts = new Text(960,250, String.valueOf(heartint));
+        hearts.setFill(Color.WHITE);
+        hearts.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
+        group.getChildren().add(hearts);
+
+        scores = new Text(960,350, String.valueOf(score));
+        scores.setFill(Color.WHITE);
+        scores.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
+        group.getChildren().add(scores);
+
 
 
 
@@ -904,13 +1082,13 @@ public class HelloApplication extends Application {
         Image bombermanSkin = new Image(input);
         bomberman.setFill(new ImagePattern(bombermanSkin));
         group.getChildren().add(bomberman);
-
+        listWalls = new ArrayList<List>();
 
 
 
 
         //Création du mur pas cassable
-        listPoint = new ArrayList<Rectangle>();
+        listWall = new ArrayList<Rectangle>();
         Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
         for(int i = 90; i < HEIGHT; i = i + 80){
             for(int j = 10; j < 850; j = j + 80){
@@ -920,16 +1098,17 @@ public class HelloApplication extends Application {
                 if(createOk){
                     Rectangle point = new Rectangle(j,i,40, 40);
                     point.setFill(new ImagePattern(wall));
-                    listPoint.add(point);
+                    listWall.add(point);
 
 
                 }
             }
 
-        }for (Rectangle p : listPoint) {
+        }for (Rectangle p : listWall) {
 
             group.getChildren().add(p);
         }
+
 
         //Création Mur cassable Height
         listWall2 = new ArrayList<Rectangle>();
@@ -972,6 +1151,9 @@ public class HelloApplication extends Application {
 
             group.getChildren().add(p);
         }
+        listWalls.add(listWall);
+        listWalls.add(listWall2);
+        listWalls.add(listWall3);
 
 
 
@@ -981,65 +1163,71 @@ public class HelloApplication extends Application {
         return group;
     }
 
-    private void isNextPositionAWall(Group group,List<Rectangle> listPoint,List<Rectangle> listWall3,  List<Rectangle> listWall2, ImageView bombeviewgif){
+    private void isNextPositionAWall(Group group,List<Rectangle> listWall,List<Rectangle> listWall3,  List<Rectangle> listWall2, ImageView bombeviewgif){
         Rectangle wallTempToRemove =null;
-        for(Rectangle wall : listWall2){
-            if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
-                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
-                    || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
-                    ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
-            ){
-                wallTempToRemove = wall;
-                group.getChildren().remove(wall);
+        Rectangle wallTempToRemove2 =null;
+        Rectangle wallTempToRemove3 =null;
+
+            for(Rectangle wall : listWall2){
+                if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
+                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
+                        || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
+                        ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
+                ){
+                    wallTempToRemove2 = wall;
+                    group.getChildren().remove(wall);
+                }
+                if(wallTempToRemove2!=null){
+                    listWall2.remove(wallTempToRemove2);
+                }
+
+
+
             }
-            if(wallTempToRemove!=null){
-                listWall2.remove(wallTempToRemove);
+            for(Rectangle wall : listWall3){
+                if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
+                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
+                        || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
+                        ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
+                ){
+                    wallTempToRemove3 = wall;
+                    group.getChildren().remove(wall);
+                }
+                if(wallTempToRemove3!=null){
+                    listWall3.remove(wallTempToRemove3);
+                }
+
+
+
+            }
+            for(Rectangle wall : listWall){
+                if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
+                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
+                        || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
+                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
+                        ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
+                ){
+                    wallTempToRemove = wall;
+                    group.getChildren().remove(wall);
+                }
+                if(wallTempToRemove!=null){
+                    listWall.remove(wallTempToRemove);
+                }
+
+
+
             }
 
 
 
-        }
-        for(Rectangle wall : listWall3){
-            if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
-                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
-                    || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
-                    ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
-            ){
-                wallTempToRemove = wall;
-                group.getChildren().remove(wall);
-            }
-            if(wallTempToRemove!=null){
-                listWall3.remove(wallTempToRemove);
-            }
-
-
-
-        }
-        for(Rectangle wall : listPoint){
-            if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
-                    || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
-                    || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
-                    || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
-                    ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
-            ){
-                wallTempToRemove = wall;
-                group.getChildren().remove(wall);
-            }
-            if(wallTempToRemove!=null){
-                listPoint.remove(wallTempToRemove);
-            }
-
-
-
-        }
 
     }
 

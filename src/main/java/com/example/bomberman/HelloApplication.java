@@ -5,6 +5,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.css.Style;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,6 +15,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -21,6 +23,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
@@ -36,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -43,7 +48,7 @@ import java.util.Random;
 
 public class HelloApplication extends Application {
 
-   static final int WIDTH = 1080;
+    static final int WIDTH = 1080;
     static final int HEIGHT = 800;
     Scene sceneMenu;
     Scene sceneChoosePlayer;
@@ -54,7 +59,6 @@ public class HelloApplication extends Application {
     List<Rectangle> listWall3;
     Scene sceneGame;
     Scene scenePause;
-    Text Pause;
     List<Circle>listEnnemy;
     Circle bomberman;
     static int bombint = 4;
@@ -63,6 +67,7 @@ public class HelloApplication extends Application {
     Integer timerBomb =0;
     Integer timer = 0;
     boolean gamePaused = true;
+    MediaPlayer mediaPlayer;
 
     Integer secondeUnite = 0;
     Integer secondeDizaine =0;
@@ -76,6 +81,7 @@ public class HelloApplication extends Application {
 
     ImageView bombeviewgif;
     Timeline tl;
+    Timeline explosion;
     Image bombegif;
 
     Boolean isAllowedBomb =true;
@@ -86,6 +92,19 @@ public class HelloApplication extends Application {
     Text timertextSecondeDizaine;
     Text timertextMinute;
     Text timertextMinuteDizaine;
+    Group groupMenu;
+    Group groupPause;
+
+    ImageView explosion1View;
+    ImageView explosion2View;
+    ImageView explosion3View;
+    ImageView explosion4View;
+    ImageView explosion5View;
+    ImageView explosion6View;
+    ImageView explosion0View;
+    Integer variable = 0;
+    Reflection reflection;
+
 
 
 
@@ -95,20 +114,20 @@ public class HelloApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         primaryStage = stage;
         Scene scene = new Scene(fxmlLoader.load(), 850, HEIGHT) ;
-        Button buttonJouer = new Button("Jouer");
-        Button buttonRegle = new Button("Règle");
-        Button buttonQuitter = new Button("Quitter");
-        Group menuPrincipal = new Group();
-        Pause = new Text("Jeux en pause appuyez sur P pour reprendre le jeux");
-        Pause.setFont(Font.font(null,FontWeight.BOLD,36));
-        Pause.setFill(Color.RED);
-        Pause.setY(400);
-        StackPane.setAlignment(Pause, Pos.CENTER);
 
-        
+
+
+        reflection = new Reflection();
+        reflection.setFraction(1);
+        music();
+
+
 
 
         tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
+        explosion = new Timeline(new KeyFrame(Duration.millis(180),e->runexplosion()));
+        explosion.setCycleCount(Timeline.INDEFINITE);
+        explosion.play();
         tl.setCycleCount(Timeline.INDEFINITE);
 
 
@@ -125,9 +144,9 @@ public class HelloApplication extends Application {
         timertextSecondeDizaine.setX(980);
         timertextSecondeDizaine.setY(400);
 
-         timerSeparator = new Text(":");
-         timerSeparator.setX(965);
-         timerSeparator.setY(400);
+        timerSeparator = new Text(":");
+        timerSeparator.setX(965);
+        timerSeparator.setY(400);
 
         timertextMinute.setX(940);
         timertextMinute.setY(400);
@@ -141,11 +160,8 @@ public class HelloApplication extends Application {
 
 
         stage.setTitle("Bomberman!");
-        menuPrincipal.setLayoutX(850/2);
-        menuPrincipal.setLayoutY(HEIGHT/2);
-        VBox vbox = new VBox(buttonJouer, buttonRegle, buttonQuitter);
-        menuPrincipal.getChildren().add(vbox);
-        sceneMenu = new Scene(menuPrincipal, WIDTH, HEIGHT, Color.GRAY);
+        buttonMenu();
+        sceneMenu = new Scene(groupMenu, WIDTH, HEIGHT, Color.GRAY);
 
         stage.setScene(sceneMenu);
         stage.show();
@@ -183,7 +199,69 @@ public class HelloApplication extends Application {
         Group groupChoose = new Group();
         groupChoose.getChildren().add(vboxChoose);
 
+
+
+        FileInputStream inputExplosion1 = new FileInputStream("src/Images/Bombes/Explosions/explosion_1.png");
+        Image explosion1 = new Image(inputExplosion1,340,340,true,false);
+         explosion1View = new ImageView(explosion1);
+        explosion1View.setX(-350);
+        explosion1View.setY(-100);
+        explosion1View.setEffect(reflection);
+
+
+        FileInputStream inputExplosion2 = new FileInputStream("src/Images/Bombes/Explosions/explosion_2.png");
+        Image explosion2 = new Image(inputExplosion2,340,340,true,false);
+         explosion2View = new ImageView(explosion2);
+        explosion2View.setX(-350);
+        explosion2View.setY(-100);
+        explosion2View.setEffect(reflection);
+
+
+        FileInputStream inputExplosion3 = new FileInputStream("src/Images/Bombes/Explosions/explosion_3.png");
+        Image explosion3 = new Image(inputExplosion3,340,340,true,false);
+         explosion3View = new ImageView(explosion3);
+        explosion3View.setX(-350);
+        explosion3View.setY(-100);
+        explosion3View.setEffect(reflection);
+
+
+        FileInputStream inputExplosion4 = new FileInputStream("src/Images/Bombes/Explosions/explosion_4.png");
+        Image explosion4 = new Image(inputExplosion4,340,340,true,false);
+         explosion4View = new ImageView(explosion4);
+        explosion4View.setX(-350);
+        explosion4View.setY(-100);
+        explosion4View.setEffect(reflection);
+
+
+        FileInputStream inputExplosion5 = new FileInputStream("src/Images/Bombes/Explosions/explosion_5.png");
+        Image explosion5 = new Image(inputExplosion5,340,340,true,false);
+         explosion5View = new ImageView(explosion5);
+        explosion5View.setX(-350);
+        explosion5View.setY(-100);
+        explosion5View.setEffect(reflection);
+
+
+        FileInputStream inputExplosion6 = new FileInputStream("src/Images/Bombes/Explosions/explosion_6.png");
+        Image explosion6 = new Image(inputExplosion6,340,340,true,false);
+         explosion6View = new ImageView(explosion6);
+        explosion6View.setX(-350);
+        explosion6View.setY(-100);
+        explosion6View.setEffect(reflection);
+
+
+        FileInputStream inputExplosion0 = new FileInputStream("src/Images/Bombes/bombesprite.png");
+        Image explosion0 = new Image(inputExplosion0,340,340,true,false);
+         explosion0View = new ImageView(explosion0);
+         explosion0View.setX(-350);
+        explosion0View.setY(-100);
+         explosion0View.setEffect(reflection);
+
+
+
+
+
         sceneChoosePlayer = new Scene(groupChoose,WIDTH,HEIGHT,Color.GRAY);
+        buttonPause();
 
         skinBlancview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
@@ -273,25 +351,170 @@ public class HelloApplication extends Application {
 
 
 
-        buttonJouer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
 
-
-                primaryStage.setScene(sceneChoosePlayer);
-
-
-
-            }
-        });
         handleGameEvent();
 
     }
+    public void music(){
+        //String s ="01Sushi.mp3";
+        //Media h = new Media(Paths.get(s).toUri().toString());
+        //mediaPlayer = new MediaPlayer(h);
+        //mediaPlayer.play();
+    }
+    private Scene buttonPause() throws FileNotFoundException{
+        groupPause = new Group();
+
+        FileInputStream inputResume = new FileInputStream("src/Images/Button/Button_Resume.png");
+        Image buttonResume = new Image(inputResume,340,340,true,false);
+        ImageView buttonResumeView = new ImageView(buttonResume);
+
+        FileInputStream inputRestart = new FileInputStream("src/Images/Button/Button_Restart.png");
+        Image buttonRestart = new Image(inputRestart,340,340,true,false);
+        ImageView buttonRestartView = new ImageView(buttonRestart);
+
+        FileInputStream inputExit = new FileInputStream("src/Images/Button/button_exit.png");
+        Image buttonExit = new Image(inputExit,340,340,true,false);
+        ImageView buttonExitView = new ImageView(buttonExit);
+        buttonExitView.setEffect(reflection);
+
+        VBox vboxButtonPause = new VBox(buttonResumeView,buttonRestartView,buttonExitView);
+        vboxButtonPause.setPrefSize(10,10);
+        groupPause.getChildren().add(vboxButtonPause);
+        groupPause.setLayoutX(370);
+        groupPause.setLayoutY(200);
+
+        scenePause = new Scene(groupPause, WIDTH, HEIGHT, Color.GRAY);
+        buttonResumeView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                primaryStage.setScene(sceneGame);
+                tl.play();
+                gamePaused = false;
+            }
+        });
+        buttonRestartView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+               primaryStage.setScene(sceneMenu);
+
+            }
+        });
+        buttonExitView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                Platform.exit();
+            }
+        });
+
+
+
+
+        return scenePause;
+    }
+
+
+    private Group buttonMenu() throws FileNotFoundException{
+
+        groupMenu = new Group();
+        FileInputStream inputPlay = new FileInputStream("src/Images/Button/button_play.png");
+        Image buttonPlay = new Image(inputPlay,340,340,true,false);
+        ImageView buttonPlayView = new ImageView(buttonPlay);
+
+
+        FileInputStream inputSetting = new FileInputStream("src/Images/Button/button_settings.png");
+        Image buttonSetting = new Image(inputSetting,340,340,true,false);
+        ImageView buttonSettingView = new ImageView(buttonSetting);
+
+
+        FileInputStream inputExit = new FileInputStream("src/Images/Button/button_exit.png");
+        Image buttonExit = new Image(inputExit,340,340,true,false);
+        ImageView buttonExitView = new ImageView(buttonExit);
+        buttonExitView.setEffect(reflection);
+
+        VBox vboxButton = new VBox(buttonPlayView,buttonSettingView,buttonExitView);
+        vboxButton.setPrefSize(10,10);
+        groupMenu.getChildren().add(vboxButton);
+        groupMenu.setLayoutX(370);
+        groupMenu.setLayoutY(200);
+
+
+        buttonPlayView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+
+                explosion.stop();
+                primaryStage.setScene(sceneChoosePlayer);
+                event.consume();
+            }
+        });
+        buttonExitView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                Platform.exit();
+            }
+        });
+
+        return groupMenu;
+    }
+    private void runexplosion(){
+        System.out.println(variable);
+
+
+        if (variable==9){
+            groupMenu.getChildren().remove(explosion6View);
+            variable=0;
+        }
+        if (variable==8){
+            groupMenu.getChildren().remove(explosion5View);
+            groupMenu.getChildren().add(explosion6View);
+
+        }
+        if (variable==7){
+            groupMenu.getChildren().remove(explosion4View);
+            groupMenu.getChildren().add(explosion5View);
+
+        }
+        if (variable==6){
+            groupMenu.getChildren().remove(explosion3View);
+            groupMenu.getChildren().add(explosion4View);
+
+        }
+        if (variable==5){
+            groupMenu.getChildren().remove(explosion2View);
+            groupMenu.getChildren().add(explosion3View);
+
+        }
+        if (variable==4){
+            groupMenu.getChildren().remove(explosion1View);
+            groupMenu.getChildren().add(explosion2View);
+
+        }
+        if (variable==3){
+            groupMenu.getChildren().remove(explosion0View);
+            groupMenu.getChildren().add(explosion1View);
+
+        }
+        if(variable==0){
+            groupMenu.getChildren().add(explosion0View);
+        }
+        variable+=1;
+
+    }
+
+
+
 
     private void run(){
-        System.out.println(couleur);
-
-
 
         Random r = new Random();
         Circle tempennemyToRemove =null;
@@ -575,13 +798,14 @@ public class HelloApplication extends Application {
                     break;
                 case'P':
                     if(tl.getStatus() == Animation.Status.RUNNING){
-                        group.getChildren().add(Pause);
+
+                        primaryStage.setScene(scenePause);
                         tl.pause();
                         gamePaused = true;
 
                     }
                     else if(tl.getStatus() == Animation.Status.PAUSED){
-                        group.getChildren().remove(Pause);
+                        primaryStage.setScene(sceneChoosePlayer);
                         tl.play();
                         gamePaused = false;
                     }

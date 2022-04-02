@@ -6,12 +6,17 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,14 +36,18 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONWriter;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static javafx.collections.FXCollections.observableArrayList;
 
 
 public class HelloApplication extends Application {
@@ -67,11 +76,15 @@ public class HelloApplication extends Application {
     Integer timerBomb =0;
     Integer timer = 0;
     boolean gamePaused = true;
+    FileWriter file;
+
+
 
     MediaPlayer mediaPlayer;
     MediaPlayer playerHover;
     MediaPlayer playerExplosion;
     TextArea saisiePseudo;
+
 
 
 
@@ -130,6 +143,8 @@ public class HelloApplication extends Application {
 
 
 
+
+
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -139,9 +154,14 @@ public class HelloApplication extends Application {
 
 
 
+
+
+
+
+
         reflection = new Reflection();
         reflection.setFraction(1);
-        music();
+        //music();
 
 
 
@@ -335,11 +355,19 @@ public class HelloApplication extends Application {
         coin6View.setY(300);
         coin6View.setEffect(reflection);
 
+        file = new FileWriter("test.txt");
+
 
 
 
 
         sceneChoosePlayer = new Scene(groupChoose,WIDTH,HEIGHT,Color.GRAY);
+
+
+
+
+
+
         buttonPause();
 
         skinBlancview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -354,6 +382,7 @@ public class HelloApplication extends Application {
                 gamePaused = false;
                 tl.play();
                 coin.play();
+
 
                 event.consume();
             }
@@ -422,7 +451,7 @@ public class HelloApplication extends Application {
         skinVertview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
             @Override
-            public void handle(MouseEvent event) {
+            public void handle(MouseEvent event){
                 System.out.println("Perso Vert choisie");
 
                 couleur = "vert";
@@ -430,6 +459,7 @@ public class HelloApplication extends Application {
                 gamePaused = false;
                 tl.play();
                 coin.play();
+                highScore();
                 event.consume();
             }
         });
@@ -438,6 +468,43 @@ public class HelloApplication extends Application {
 
 
         handleGameEvent();
+
+    }
+    public void highScore(){
+        try{
+            //JSONObject obj = new JSONObject(file.toString());
+            //System.out.println(obj);
+
+
+
+            //String jsonString ="{\"name\":\"Alice\",\"age\": 20}";
+            //JSONObject obj = new JSONObject(jsonString);
+            //String n = obj.getString("name");
+            //int a = obj.getInt("age");
+            //System.out.println(n + " " + a );
+            //obj.put(saisiePseudo.getText(),10);
+
+            //Pour écrire dans un fihier txt avec du json
+            //JSONObject jo = new JSONObject();
+            //jo.put("Score", 11);
+            //jo.put("Name", saisiePseudo.getText());
+
+            //JSONObject test = new JSONObject();
+            //test.put("Score", 12);
+            //test.put("Name", saisiePseudo.getText());
+
+            //JSONArray ja = new JSONArray();
+            //ja.put(test);
+            //ja.put(jo);
+
+            //file.write(ja.toString());
+            //file.flush();
+            file.close();
+
+
+        }catch(IOException e){
+
+        }
 
     }
     public void music(){
@@ -678,6 +745,7 @@ public class HelloApplication extends Application {
             musicExplosion();
             group.getChildren().remove(bombeviewgif);
             isNextPositionAWall(groupGame, listWall,listWall3, listWall2,bombeviewgif);
+
             isAllowedBomb =true;
 
     }
@@ -688,6 +756,37 @@ public class HelloApplication extends Application {
     private void run(){
 
         Random r = new Random();
+        group.getChildren().remove(bombes);
+        group.getChildren().remove(scores);
+
+
+
+
+        scores = new Text();
+        scores.setText(String.valueOf(score));
+        scores.setX(960);
+        scores.setY(350);
+        scores.setFill(Color.WHITE);
+        scores.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
+        group.getChildren().add(scores);
+
+
+
+
+
+
+
+
+
+        bombes = new Text();
+        bombes.setText(String.valueOf(bombint));
+        bombes.setX(960);
+        bombes.setY(160);
+
+        bombes.setFill(Color.WHITE);
+        bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
+        group.getChildren().add(bombes);
+
         Circle tempennemyToRemove =null;
         for(Circle ennemy:listEnnemy){
             boolean chasseOn = false;
@@ -833,15 +932,19 @@ public class HelloApplication extends Application {
                     case 'B':
 
 
-                        timerBomb =seconde;
-                        bombe.play();
+
+
 
 
                         timerBomb =seconde;
                         if (bombint > 0) {
+                            timerBomb =seconde;
+                            bombe.play();
                             group.getChildren().add(bombeviewgif);
                             bombeviewgif.setY(bomberman.getCenterY() - bomberman.getRadius());
                             bombeviewgif.setX(bomberman.getCenterX() - bomberman.getRadius());
+                            bombint -=1;
+
 
 
                         }
@@ -1019,20 +1122,14 @@ public class HelloApplication extends Application {
 
 
         //Affichage du nombre de bombe restant
-        bombes = new Text(960,160, String.valueOf(bombint));
-        bombes.setFill(Color.WHITE);
-        bombes.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
-        group.getChildren().add(bombes);
+
 
         hearts = new Text(960,250, String.valueOf(heartint));
         hearts.setFill(Color.WHITE);
         hearts.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
         group.getChildren().add(hearts);
 
-        scores = new Text(960,350, String.valueOf(score));
-        scores.setFill(Color.WHITE);
-        scores.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
-        group.getChildren().add(scores);
+
 
 
 
@@ -1179,6 +1276,7 @@ public class HelloApplication extends Application {
                 ){
                     wallTempToRemove2 = wall;
                     group.getChildren().remove(wall);
+                    score +=3;
                 }
                 if(wallTempToRemove2!=null){
                     listWall2.remove(wallTempToRemove2);
@@ -1198,6 +1296,7 @@ public class HelloApplication extends Application {
                 ){
                     wallTempToRemove3 = wall;
                     group.getChildren().remove(wall);
+                    score +=3;
                 }
                 if(wallTempToRemove3!=null){
                     listWall3.remove(wallTempToRemove3);
@@ -1217,6 +1316,7 @@ public class HelloApplication extends Application {
                 ){
                     wallTempToRemove = wall;
                     group.getChildren().remove(wall);
+                    score +=3;
                 }
                 if(wallTempToRemove!=null){
                     listWall.remove(wallTempToRemove);

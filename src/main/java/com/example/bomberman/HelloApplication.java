@@ -73,15 +73,10 @@ public class HelloApplication extends Application {
     FileReader fileReader;
     JSONParser jsonParser;
 
-
-
     MediaPlayer mediaPlayer;
     MediaPlayer playerHover;
     MediaPlayer playerExplosion;
     TextArea saisiePseudo;
-
-
-
 
     Integer secondeUnite = 0;
     Integer secondeDizaine =0;
@@ -132,14 +127,6 @@ public class HelloApplication extends Application {
     Reflection reflection;
     ImageView buttonRestartView;
 
-
-
-
-
-
-
-
-
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -147,19 +134,9 @@ public class HelloApplication extends Application {
         primaryStage = stage;
         Scene scene = new Scene(fxmlLoader.load(), 850, HEIGHT) ;
 
-
-
-
-
-
-
-
         reflection = new Reflection();
         reflection.setFraction(1);
         //music();
-
-
-
 
         tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
         explosion = new Timeline(new KeyFrame(Duration.millis(180),e->runexplosion()));
@@ -171,13 +148,9 @@ public class HelloApplication extends Application {
         bombe = new Timeline(new KeyFrame(Duration.seconds(1),e->runbombe()));
         bombe.setCycleCount(1);
 
-
         saisiePseudo = new TextArea();
         saisiePseudo.setPrefHeight(50);
         saisiePseudo.setPrefWidth(50);
-
-
-
 
         timertextSeconde =new Text();
         timertextSecondeDizaine = new Text();
@@ -202,11 +175,6 @@ public class HelloApplication extends Application {
         timertextMinuteDizaine.setX(920);
         timertextMinuteDizaine.setY(45);
 
-
-
-
-
-
         stage.setTitle("Bomberman!");
         buttonMenu();
         sceneMenu = new Scene(groupMenu, WIDTH, HEIGHT, Color.GRAY);
@@ -216,7 +184,6 @@ public class HelloApplication extends Application {
         groupGame = initializeGroupGame();
         sceneGame = new Scene(groupGame, WIDTH, HEIGHT, Color.GRAY);
         //Ici
-
 
         FileInputStream inputBlanc  = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
         Image skinBlanc = new Image(inputBlanc,340,340,true,false);
@@ -249,9 +216,6 @@ public class HelloApplication extends Application {
 
         VBox vboxtest = new VBox(vboxChoose,saisiePseudo);
         groupChoose.getChildren().add(vboxtest);
-
-
-
 
 
         FileInputStream inputExplosion1 = new FileInputStream("src/Images/Bombes/Explosions/explosion_1.png");
@@ -309,7 +273,6 @@ public class HelloApplication extends Application {
          explosion0View.setEffect(reflection);
 
 
-
         FileInputStream inputCoin1 = new FileInputStream("src/Images/Coins/star coin rotate 1.png");
         Image coin1 = new Image(inputCoin1,70,70,true,false);
         coin1View = new ImageView(coin1);
@@ -357,16 +320,7 @@ public class HelloApplication extends Application {
          jsonParser = new JSONParser();
 
 
-
-
-
-
-
         sceneChoosePlayer = new Scene(groupChoose,WIDTH,HEIGHT,Color.GRAY);
-
-
-
-
 
 
         buttonPause();
@@ -476,25 +430,14 @@ public class HelloApplication extends Application {
 
     public void highScore(){
 
-        try {
+        //try {
 
-            JSONObject jsonObj = (JSONObject) jsonParser(new FileReader("test.txt"));
+            //JSONObject jsonObj = (JSONObject) jsonParser(new FileReader("test.txt"));
 
-        }catch (Exception e){
-            System.out.println(e);
+        //}catch (Exception e){
+            //System.out.println(e);
 
-        }
-
-
-
-
-
-
-
-
-
-
-
+        //}
 
 
 
@@ -801,12 +744,6 @@ public class HelloApplication extends Application {
         scores.setFill(Color.WHITE);
         scores.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
         group.getChildren().add(scores);
-
-
-
-
-
-
 
 
 

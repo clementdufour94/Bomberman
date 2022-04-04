@@ -6,17 +6,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,16 +31,14 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -76,7 +69,9 @@ public class HelloApplication extends Application {
     Integer timerBomb =0;
     Integer timer = 0;
     boolean gamePaused = true;
-    FileWriter file;
+    FileWriter fileWriter;
+    FileReader fileReader;
+    JSONParser jsonParser;
 
 
 
@@ -257,6 +252,8 @@ public class HelloApplication extends Application {
 
 
 
+
+
         FileInputStream inputExplosion1 = new FileInputStream("src/Images/Bombes/Explosions/explosion_1.png");
         Image explosion1 = new Image(inputExplosion1,340,340,true,false);
          explosion1View = new ImageView(explosion1);
@@ -355,7 +352,11 @@ public class HelloApplication extends Application {
         coin6View.setY(300);
         coin6View.setEffect(reflection);
 
-        file = new FileWriter("test.txt");
+        //fileWriter = new FileWriter("test.json");
+        //fileReader = new FileReader("test.json");
+         jsonParser = new JSONParser();
+
+
 
 
 
@@ -460,6 +461,8 @@ public class HelloApplication extends Application {
                 tl.play();
                 coin.play();
                 highScore();
+
+
                 event.consume();
             }
         });
@@ -470,19 +473,51 @@ public class HelloApplication extends Application {
         handleGameEvent();
 
     }
+
     public void highScore(){
-        try{
+
+        try {
+
+            JSONObject jsonObj = (JSONObject) jsonParser(new FileReader("test.txt"));
+
+        }catch (Exception e){
+            System.out.println(e);
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //try{
+
+
+
+            //Insert dans fichier Fonctionnel
+
+            //JSONObject obj = new JSONObject();
+            //obj.put(saisiePseudo.getText(),String.valueOf(score));
+            //fileWriter.write(obj.toString());
+            //fileWriter.flush();
+            //fileWriter.close();
+
+            //DEBUT TEST
             //JSONObject obj = new JSONObject(file.toString());
-            //System.out.println(obj);
-
-
-
             //String jsonString ="{\"name\":\"Alice\",\"age\": 20}";
-            //JSONObject obj = new JSONObject(jsonString);
+
             //String n = obj.getString("name");
             //int a = obj.getInt("age");
             //System.out.println(n + " " + a );
-            //obj.put(saisiePseudo.getText(),10);
+
 
             //Pour écrire dans un fihier txt avec du json
             //JSONObject jo = new JSONObject();
@@ -496,15 +531,10 @@ public class HelloApplication extends Application {
             //JSONArray ja = new JSONArray();
             //ja.put(test);
             //ja.put(jo);
+            //FIN TEST
+        //}catch(IOException e){
 
-            //file.write(ja.toString());
-            //file.flush();
-            file.close();
-
-
-        }catch(IOException e){
-
-        }
+        //}
 
     }
     public void music(){
@@ -570,6 +600,8 @@ public class HelloApplication extends Application {
 
             @Override
             public void handle(MouseEvent event) {
+
+
 
                 Platform.exit();
             }

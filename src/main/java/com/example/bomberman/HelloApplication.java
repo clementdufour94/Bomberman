@@ -31,8 +31,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 
@@ -45,16 +43,15 @@ import static javafx.collections.FXCollections.observableArrayList;
 
 public class HelloApplication extends Application {
 
-    static final int WIDTH = 1080;
-    static final int HEIGHT = 800;
+    static final int WIDTH = 1080; //40*27 donc 21 blocs de large
+    static final int HEIGHT = 800; //40*20 donc 20 bloc de haut
     Scene sceneMenu;
-    Scene sceneChoosePlayer;
+
     Stage primaryStage;
     Group groupGame;
     List<List> listWalls;
     List<Rectangle> listWall;
     List<Rectangle> listWall2;
-    List<Rectangle> listWall3;
     Scene sceneGame;
     Scene scenePause;
     List<Circle>listEnnemy;
@@ -78,7 +75,8 @@ public class HelloApplication extends Application {
     MediaPlayer mediaPlayer;
     MediaPlayer playerHover;
     MediaPlayer playerExplosion;
-    TextArea saisiePseudo;
+
+
 
 
 
@@ -90,7 +88,7 @@ public class HelloApplication extends Application {
     Integer seconde=0;
     Integer minute=0;
     Text timerSeparator;
-    Boolean truc;
+
 
     Integer iTimerfix =0;
 
@@ -103,8 +101,7 @@ public class HelloApplication extends Application {
 
     Boolean isAllowedBomb =true;
 
-    String couleur = "";
-    FileInputStream input;
+
     Text timertextSeconde;
     Text timertextSecondeDizaine;
     Text timertextMinute;
@@ -128,17 +125,47 @@ public class HelloApplication extends Application {
     ImageView coin5View;
     ImageView coin6View;
 
+    FileInputStream inputFace;
+    Image imageFace;
+    ImagePattern imagePatternFace;
+
+    FileInputStream inputDos;
+    Image imageBack ;
+    ImagePattern imagePatternBack;
+
+    FileInputStream inputGauche;
+    Image imageGauche;
+    ImagePattern imagePatternGauche;
+
+    FileInputStream inputDroite;
+    Image imageDroite;
+    ImagePattern imagePatternDroite;
+
     Integer variableCoin = 0;
     Reflection reflection;
     ImageView buttonRestartView;
-
-
-
-
-
-
-
-
+    public int[][] tiles ={
+            {1,0,0,0,0,2,2,2,2,2,0,2,0,1,2,0,0,2,0,0,1},
+    {0,0,0,0,0,2,1,1,1,2,0,2,0,0,2,0,0,2,0,0,1},
+    {0,0,0,0,0,2,2,2,1,2,2,1,0,0,2,0,0,2,0,0,1},
+    {0,0,0,0,1,2,0,2,1,2,2,1,0,1,1,0,1,2,0,0,1},
+    {0,0,0,1,1,2,0,0,1,1,1,1,1,1,2,1,0,2,1,1,1},
+    {0,0,1,1,2,2,0,0,0,0,2,1,2,2,2,0,0,2,1,1,1},
+    {0,1,1,2,2,0,0,0,0,0,2,1,2,0,0,0,0,2,0,0,1},
+    {2,1,2,2,0,0,0,0,0,0,2,2,2,0,0,0,0,2,0,0,1},
+    {2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1},
+    {2,2,2,1,0,0,0,0,1,1,0,0,0,0,0,0,0,2,0,0,1},
+    {0,1,2,1,0,1,0,0,1,1,0,0,0,0,0,0,0,2,0,0,1},
+    {0,1,2,0,1,1,1,2,1,1,2,2,2,2,2,2,2,2,2,2,1},
+    {1,1,2,0,0,1,2,2,2,2,2,2,2,2,2,1,1,1,1,2,1},
+    {2,2,2,0,0,0,2,1,2,0,0,0,0,0,2,1,2,0,1,2,1},
+    {0,2,2,0,0,0,0,0,2,0,0,0,0,0,2,1,2,0,1,2,1},
+    {0,2,2,0,0,0,1,1,2,0,0,0,0,2,2,1,2,0,1,2,1},
+    {0,2,2,1,0,0,1,1,2,0,0,0,0,2,1,1,2,0,1,2,1},
+    {0,2,2,1,1,1,1,1,2,0,0,0,0,2,1,1,2,0,1,2,1},
+    {0,2,2,2,2,2,2,2,2,0,0,0,0,2,2,2,1,0,1,2,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1,0,1}
+};
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -172,16 +199,31 @@ public class HelloApplication extends Application {
         bombe.setCycleCount(1);
 
 
-        saisiePseudo = new TextArea();
-        saisiePseudo.setPrefHeight(50);
-        saisiePseudo.setPrefWidth(50);
 
 
 
 
         timertextSeconde =new Text();
         timertextSecondeDizaine = new Text();
-        input = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
+
+        inputFace = new FileInputStream("src/Images/Bomberman/bomberman_face.png");
+        imageFace = new Image(inputFace);
+        imagePatternFace = new ImagePattern(imageFace);
+
+        inputDos = new FileInputStream("src/Images/Bomberman/bomberman_dos.png");
+        imageBack = new Image(inputDos);
+        imagePatternBack = new ImagePattern(imageBack);
+
+        inputGauche = new FileInputStream("src/Images/Bomberman/bomberman_gauche.png");
+        imageGauche = new Image(inputGauche);
+        imagePatternGauche = new ImagePattern(imageGauche);
+
+        inputDroite = new FileInputStream("src/Images/Bomberman/bomberman_droite.png");
+        imageDroite = new Image(inputDroite);
+        imagePatternDroite = new ImagePattern(imageDroite);
+
+
+
 
         timertextMinute =new Text();
         timertextMinuteDizaine = new Text();
@@ -218,37 +260,7 @@ public class HelloApplication extends Application {
         //Ici
 
 
-        FileInputStream inputBlanc  = new FileInputStream("src/Images/Bomberman/bombermanBlanc.png");
-        Image skinBlanc = new Image(inputBlanc,340,340,true,false);
-        ImageView skinBlancview = new ImageView(skinBlanc);
 
-        FileInputStream inputBleu  = new FileInputStream("src/Images/Bomberman/bombermanBleu.png");
-        Image skinBleu = new Image(inputBleu,340,340,true,false);
-        ImageView skinBleuview = new ImageView(skinBleu);
-
-        FileInputStream inputJaune  = new FileInputStream("src/Images/Bomberman/bombermanJaune.png");
-        Image skinJaune = new Image(inputJaune,340,340,true,false);
-        ImageView skinJauneview = new ImageView(skinJaune);
-
-        FileInputStream inputNoir  = new FileInputStream("src/Images/Bomberman/bombermanNoir.png");
-        Image skinNoir = new Image(inputNoir,340,340,true,false);
-        ImageView skinNoirview = new ImageView(skinNoir);
-
-        FileInputStream inputRouge  = new FileInputStream("src/Images/Bomberman/BombermanRouge.png");
-        Image skinRouge = new Image(inputRouge,340,340,true,false);
-        ImageView skinRougeview = new ImageView(skinRouge);
-
-        FileInputStream inputVert  = new FileInputStream("src/Images/Bomberman/bombermanVert.png");
-        Image skinVert = new Image(inputVert,340,340,true,false);
-        ImageView skinVertview = new ImageView(skinVert);
-
-        HBox vboxChoose = new HBox(skinBlancview, skinBleuview, skinJauneview, skinNoirview, skinRougeview,skinVertview);
-        vboxChoose.setPrefSize(10,10);
-        Group groupChoose = new Group();
-
-
-        VBox vboxtest = new VBox(vboxChoose,saisiePseudo);
-        groupChoose.getChildren().add(vboxtest);
 
 
 
@@ -362,7 +374,8 @@ public class HelloApplication extends Application {
 
 
 
-        sceneChoosePlayer = new Scene(groupChoose,WIDTH,HEIGHT,Color.GRAY);
+
+
 
 
 
@@ -371,101 +384,7 @@ public class HelloApplication extends Application {
 
         buttonPause();
 
-        skinBlancview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Perso blanc choisie");
-
-                couleur = "blanc";
-                input = inputBlanc;
-                primaryStage.setScene(sceneGame);
-                gamePaused = false;
-                tl.play();
-                coin.play();
-
-
-                event.consume();
-            }
-        });
-        skinBleuview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Perso bleu choisie");
-
-                couleur = "bleu";
-                input=inputBleu;
-                primaryStage.setScene(sceneGame);
-                gamePaused = false;
-                tl.play();
-                coin.play();
-
-                event.consume();
-            }
-        });
-        skinJauneview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Perso jaune choisie");
-
-                couleur = "jaune";
-                input=inputJaune;
-                primaryStage.setScene(sceneGame);
-                gamePaused = false;
-                tl.play();
-                coin.play();
-                event.consume();
-            }
-        });
-        skinNoirview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Perso noir choisie");
-
-                couleur = "noir";
-                input = inputNoir;
-                primaryStage.setScene(sceneGame);
-                gamePaused = false;
-                tl.play();
-                coin.play();
-                event.consume();
-            }
-        });
-        skinRougeview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Perso rouge choisie");
-
-                couleur = "rouge";
-                input=inputRouge;
-                primaryStage.setScene(sceneGame);
-                gamePaused = false;
-                tl.play();
-                coin.play();
-                event.consume();
-            }
-        });
-        skinVertview.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event){
-                System.out.println("Perso Vert choisie");
-
-                couleur = "vert";
-                primaryStage.setScene(sceneGame);
-                gamePaused = false;
-                tl.play();
-                coin.play();
-                highScore();
-
-
-                event.consume();
-            }
-        });
 
 
 
@@ -474,29 +393,33 @@ public class HelloApplication extends Application {
 
     }
 
+    public void map(){
+        //ArrayList<String>[][] ze = new ArrayList[27][20];
+        //ze[1][1].add("1");
+        //ze[2][1].add("test");
+        //System.out.println(ze[1][1]);
+
+
+
+
+
+
+
+
+
+
+    }
+
     public void highScore(){
 
-        try {
+       // try {
 
-            JSONObject jsonObj = (JSONObject) jsonParser(new FileReader("test.txt"));
+            //JSONObject jsonObj = (JSONObject) jsonParser(new FileReader("test.txt"));
 
-        }catch (Exception e){
-            System.out.println(e);
+        //}catch (Exception e){
+        //System.out.println(e);
 
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
+        //}
 
         //try{
 
@@ -646,7 +569,12 @@ public class HelloApplication extends Application {
 
 
                 explosion.stop();
-                primaryStage.setScene(sceneChoosePlayer);
+                primaryStage.setScene(sceneGame);
+                gamePaused = false;
+                tl.play();
+                coin.play();
+                highScore();
+                map();
                 event.consume();
             }
         });
@@ -776,7 +704,7 @@ public class HelloApplication extends Application {
 
             musicExplosion();
             group.getChildren().remove(bombeviewgif);
-            isNextPositionAWall(groupGame, listWall,listWall3, listWall2,bombeviewgif);
+            isNextPositionAWall(groupGame, listWall2,bombeviewgif);
 
             isAllowedBomb =true;
 
@@ -959,14 +887,15 @@ public class HelloApplication extends Application {
             char keyEntered = event.getText().toUpperCase().charAt(0);
 
             boolean isMouvOk = !gamePaused;
+
+            boolean canFront = false;
+            boolean canback = true;
+            boolean canLeft = true;
+            boolean canRight = true;
+
             if(isAllowedBomb=true){
                 switch(keyEntered){
                     case 'B':
-
-
-
-
-
 
                         timerBomb =seconde;
                         if (bombint > 0) {
@@ -977,34 +906,23 @@ public class HelloApplication extends Application {
                             bombeviewgif.setX(bomberman.getCenterX() - bomberman.getRadius());
                             bombint -=1;
 
-
-
                         }
                         isAllowedBomb =false;
-
-
-                        //new Timeline(new KeyFrame(
-                        //Duration.seconds(3),
-                        //ae->{
-
-
-                        //isNextPositionAWall(groupGame, listPoint,listPoint2,listPoint3,bombeviewgif);
-                        //group.getChildren().remove(bombeviewgif);
-                        //System.out.println("hey");
-
-
-                        //})).play();
-
-
-
-
-
                         break;
-
                 }
             }
             switch (keyEntered){
                 case 'Z' :
+                    if(canback = true){
+                        bomberman.setFill(imagePatternBack);
+                        canFront =true;
+                        canback = false;
+                        canLeft =true;
+                        canRight =true;
+
+                    }
+
+
 
 
 
@@ -1028,6 +946,15 @@ public class HelloApplication extends Application {
                     }
                     break;
                 case 'S' :
+                    if(canFront =true){
+
+                        bomberman.setFill(imagePatternFace);
+                        canFront =false;
+                        canback = true;
+                        canLeft=true;
+                        canRight =true;
+
+                    }
 
 
 
@@ -1053,6 +980,15 @@ public class HelloApplication extends Application {
                     break;
                 case 'Q' :
 
+                    if(canLeft = true){
+
+                        bomberman.setFill(imagePatternGauche);
+                        canFront = true;
+                        canback = true;
+                        canLeft=false;
+                        canRight =true;
+                    }
+
 
 
                     for (Node node : groupGame.getChildren()) {
@@ -1075,6 +1011,14 @@ public class HelloApplication extends Application {
                     }
                     break;
                 case 'D' :
+                    if(canRight = true){
+                        bomberman.setFill(imagePatternDroite);
+
+                        canFront = true;
+                        canback = true;
+                        canLeft=true;
+                        canRight =false;
+                    }
 
 
 
@@ -1106,7 +1050,7 @@ public class HelloApplication extends Application {
 
                     }
                     else if(tl.getStatus() == Animation.Status.PAUSED){
-                        primaryStage.setScene(sceneChoosePlayer);
+                        primaryStage.setScene(sceneMenu);
                         tl.play();
                         gamePaused = false;
                     }
@@ -1175,22 +1119,106 @@ public class HelloApplication extends Application {
         bombeviewgif.setFitHeight(40);
         bombeviewgif.setPreserveRatio(true);
 
+
+
+
+        //Afficage Bomberman
+        bomberman = new Circle(70,30,12);
+
+
+        bomberman.setFill(imagePatternFace);
+
+        group.getChildren().add(bomberman);
+        listWalls = new ArrayList<List>();
+
+        //Création du mur pas cassable
+        listWall = new ArrayList<Rectangle>();
+        Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
+
+        listWall2 = new ArrayList<Rectangle>();
+        Image wall2 = new Image("http://images.shoutwiki.com/bomberpedia/thumb/a/af/HardBlock.png/200px-HardBlock.png", false);
+
+
+        for(int x=0; x< tiles.length;x++){
+            for(int y=0; y< tiles[x].length;y++){
+                if(tiles[x][y]==1){
+                    Rectangle point = new Rectangle(y*40,x*40,40, 40);
+                    point.setFill(new ImagePattern(wall));
+                    listWall.add(point);
+
+                }else if(tiles[x][y]==2){
+                    Rectangle point = new Rectangle(y*40,x*40,40, 40);
+                    point.setFill(new ImagePattern(wall2));
+                    listWall2.add(point);
+
+
+
+
+                }
+            }
+        }
+        for (Rectangle p : listWall) {
+
+            group.getChildren().add(p);
+        }
+        for (Rectangle p : listWall2) {
+
+            group.getChildren().add(p);
+        }
+        listWalls.add(listWall);
+        listWalls.add(listWall2);
+
         //Affichage des ennemies
-        //Circle ennemy1 = new Circle(94,90,15,Color.RED);
-        Circle ennemy2 = new Circle(700,700,15,Color.RED);
-        Circle ennemy3 = new Circle(700,700,15,Color.RED);
-        Circle ennemy4 = new Circle(700,700,15,Color.RED);
+        Circle ennemy1 = new Circle(94,90,15);
+        Circle ennemy2 = new Circle(118,714,15);
+        Circle ennemy3 = new Circle(700,700,15);
+        Circle ennemy4 = new Circle(700,700,15);
+        Circle ennemy5 = new Circle(700,700,15);
+        Circle ennemy6 = new Circle(700,700,15);
+
+
+        FileInputStream ennemyInput1 = new FileInputStream("src/Images/ennemy/enemy1.png");
+        Image ennemy1Skin = new Image(ennemyInput1);
+        ennemy1.setFill(new ImagePattern(ennemy1Skin));
+
+        FileInputStream ennemyInput2 = new FileInputStream("src/Images/ennemy/enemy2.png");
+        Image ennemy2Skin = new Image(ennemyInput2);
+        ennemy2.setFill(new ImagePattern(ennemy2Skin));
+
+        FileInputStream ennemyInput3 = new FileInputStream("src/Images/ennemy/enemy3.png");
+        Image ennemy3Skin = new Image(ennemyInput3);
+        ennemy3.setFill(new ImagePattern(ennemy3Skin));
+
+        FileInputStream ennemyInput4 = new FileInputStream("src/Images/ennemy/enemy4.png");
+        Image ennemy4Skin = new Image(ennemyInput4);
+        ennemy4.setFill(new ImagePattern(ennemy4Skin));
+
+        FileInputStream ennemyInput5 = new FileInputStream("src/Images/ennemy/enemy5.png");
+        Image ennemy5Skin = new Image(ennemyInput5);
+        ennemy5.setFill(new ImagePattern(ennemy5Skin));
+
+        FileInputStream ennemyInput6 = new FileInputStream("src/Images/ennemy/enemy6.png");
+        Image ennemy6Skin = new Image(ennemyInput6);
+        ennemy6.setFill(new ImagePattern(ennemy6Skin));
+
+
         listEnnemy = new ArrayList<Circle>();
-        //listEnnemy.add(ennemy1);
+        listEnnemy.add(ennemy1);
         listEnnemy.add(ennemy2);
         listEnnemy.add(ennemy3);
         listEnnemy.add(ennemy4);
+        listEnnemy.add(ennemy5);
+        listEnnemy.add(ennemy6);
 
-        //group.getChildren().add(ennemy1);
+
+
+        group.getChildren().add(ennemy1);
         group.getChildren().add(ennemy2);
         group.getChildren().add(ennemy3);
-
         group.getChildren().add(ennemy4);
+        group.getChildren().add(ennemy5);
+        group.getChildren().add(ennemy6);
+
 
         //Il faut que la position x et y des ennemies soient un multiple de 70+12 pour x et 30 +12 pour y exemple(82,42) ou (94,54
 
@@ -1200,111 +1228,19 @@ public class HelloApplication extends Application {
 
 
 
-
-
-
-
-
-        //Afficage Bomberman
-        bomberman = new Circle(70,30,12);
-
-        Image bombermanSkin = new Image(input);
-        bomberman.setFill(new ImagePattern(bombermanSkin));
-        group.getChildren().add(bomberman);
-        listWalls = new ArrayList<List>();
-
-
-
-
-        //Création du mur pas cassable
-        listWall = new ArrayList<Rectangle>();
-        Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
-        for(int i = 90; i < HEIGHT; i = i + 80){
-            for(int j = 10; j < 850; j = j + 80){
-                boolean createOk = true;
-
-
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall));
-                    listWall.add(point);
-
-
-                }
-            }
-
-        }for (Rectangle p : listWall) {
-
-            group.getChildren().add(p);
-        }
-
-
-        //Création Mur cassable Height
-        listWall2 = new ArrayList<Rectangle>();
-        Image wall2 = new Image("http://images.shoutwiki.com/bomberpedia/thumb/a/af/HardBlock.png/200px-HardBlock.png", false);
-        for(int i = 50; i < HEIGHT; i = i + 80){
-            for(int j = 10; j < 850; j = j + 80){
-                boolean createOk = true;
-
-
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall2));
-                    listWall2.add(point);
-
-
-                }
-            }
-
-        }for (Rectangle p : listWall2) {
-
-            group.getChildren().add(p);
-        }
-
-        //Création Mur cassable Width
-        listWall3 = new ArrayList<Rectangle>();
-        for(int i = 50; i < HEIGHT; i = i + 80){
-            for(int j = 50; j < 850; j = j + 80){
-                boolean createOk = true;
-
-
-                if(createOk){
-                    Rectangle point = new Rectangle(j,i,40, 40);
-                    point.setFill(new ImagePattern(wall2));
-                    listWall3.add(point);
-
-                }
-            }
-
-        }for (Rectangle p : listWall3) {
-
-            group.getChildren().add(p);
-        }
-        listWalls.add(listWall);
-        listWalls.add(listWall2);
-        listWalls.add(listWall3);
-
-
-
-
-
-
         return group;
     }
 
-    private void isNextPositionAWall(Group group,List<Rectangle> listWall,List<Rectangle> listWall3,  List<Rectangle> listWall2, ImageView bombeviewgif){
-        Rectangle wallTempToRemove =null;
+    private void isNextPositionAWall(Group group,  List<Rectangle> listWall2, ImageView bombeviewgif){
+
         Rectangle wallTempToRemove2 =null;
-        Rectangle wallTempToRemove3 =null;
+
 
             for(Rectangle wall : listWall2){
-                if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
-                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
-                        || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
-                        ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
+
+                if(wall.getX() == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
+                        || bombeviewgif.getX()+50>=wall.getX() && wall.getX()>= bombeviewgif.getX()-50
+                        && bombeviewgif.getY()+50>=wall.getY() && wall.getY()>= bombeviewgif.getY()-50
                 ){
                     wallTempToRemove2 = wall;
                     group.getChildren().remove(wall);
@@ -1317,46 +1253,7 @@ public class HelloApplication extends Application {
 
 
             }
-            for(Rectangle wall : listWall3){
-                if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
-                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
-                        || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
-                        ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
-                ){
-                    wallTempToRemove3 = wall;
-                    group.getChildren().remove(wall);
-                    score +=3;
-                }
-                if(wallTempToRemove3!=null){
-                    listWall3.remove(wallTempToRemove3);
-                }
 
-
-
-            }
-            for(Rectangle wall : listWall){
-                if(wall.getX()  == bombeviewgif.getX() && wall.getY() == bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()+10
-                        || wall.getX() >= bombeviewgif.getX()+10 && wall.getY() >= bombeviewgif.getY()+10
-                        || wall.getX() >= bombeviewgif.getX()-10 && wall.getY() >= bombeviewgif.getY()
-                        || wall.getX() >= bombeviewgif.getX() && wall.getY() >= bombeviewgif.getY()-10
-                        ||wall.getX() >= bombeviewgif.getX()-10 && wall.getY()>=bombeviewgif.getY()-10
-                ){
-                    wallTempToRemove = wall;
-                    group.getChildren().remove(wall);
-                    score +=3;
-                }
-                if(wallTempToRemove!=null){
-                    listWall.remove(wallTempToRemove);
-                }
-
-
-
-            }
 
 
 

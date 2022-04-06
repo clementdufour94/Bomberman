@@ -128,6 +128,14 @@ public class HelloApplication extends Application {
     Image imageBack ;
     ImagePattern imagePatternBack;
 
+    FileInputStream inputDos2;
+    Image imageBack2 ;
+    ImagePattern imagePatternBack2;
+
+    FileInputStream inputDos3;
+    Image imageBack3 ;
+    ImagePattern imagePatternBack3;
+
     FileInputStream inputGauche;
     Image imageGauche;
     ImagePattern imagePatternGauche;
@@ -194,6 +202,14 @@ public class HelloApplication extends Application {
         inputDos = new FileInputStream("src/Images/Bomberman/bomberman_dos.png");
         imageBack = new Image(inputDos);
         imagePatternBack = new ImagePattern(imageBack);
+
+        inputDos2 = new FileInputStream("src/Images/Bomberman/bomberman_dos_2.png");
+        imageBack2 = new Image(inputDos2);
+        imagePatternBack2 = new ImagePattern(imageBack2);
+
+        inputDos3 = new FileInputStream("src/Images/Bomberman/bomberman_dos_3.png");
+        imageBack3 = new Image(inputDos3);
+        imagePatternBack3 = new ImagePattern(imageBack3);
 
         inputGauche = new FileInputStream("src/Images/Bomberman/bomberman_gauche.png");
         imageGauche = new Image(inputGauche);
@@ -855,9 +871,20 @@ public class HelloApplication extends Application {
             boolean isMouvOk = !gamePaused;
 
             boolean canFront = false;
+            boolean canFront2 = false;
+            boolean canFront3 = false;
+
             boolean canback = true;
+            boolean canback2 = true;
+            boolean canback3 = true;
+
             boolean canLeft = true;
+            boolean canLeft2 = true;
+            boolean canLeft3 = true;
+
             boolean canRight = true;
+            boolean canRight2 = true;
+            boolean canRight3 = true;
 
             if(isAllowedBomb=true){
                 switch(keyEntered){
@@ -879,14 +906,36 @@ public class HelloApplication extends Application {
             }
             switch (keyEntered){
                 case 'Z' :
+                    if(canback3=true){
+                        System.out.println("entré dans canback3");
+                        bomberman.setFill(imagePatternBack2);
+                        canback3=false;
+                        canback=true;
+
+                    }
+
+                    if(canback2=true){
+                        System.out.println("entré dans canback2");
+                        bomberman.setFill(imagePatternBack3);
+
+                        canback2 =false;
+                        canback3 = true;
+
+                    }
                     if(canback = true){
                         bomberman.setFill(imagePatternBack);
                         canFront =true;
-                        canback = false;
                         canLeft =true;
                         canRight =true;
 
+                        canback = false;
+                        canback2 =true;
+                        canback3=false;
+
+
                     }
+
+
 
 
 

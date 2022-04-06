@@ -49,14 +49,16 @@ public class HelloApplication extends Application {
 
     Stage primaryStage;
     Group groupGame;
-    List<List> listWalls;
+
     List<Rectangle> listWall;
     List<Rectangle> listWall2;
+    List<ImageView> listBombs;
+    List<ImageView> listBagOfCoin;
     Scene sceneGame;
     Scene scenePause;
     List<Circle>listEnnemy;
     Circle bomberman;
-    static int bombint = 4;
+    static int bombint = 9;
     static  int heartint =3;
     public int score=0;
     Text bombes;
@@ -128,14 +130,6 @@ public class HelloApplication extends Application {
     Image imageBack ;
     ImagePattern imagePatternBack;
 
-    FileInputStream inputDos2;
-    Image imageBack2 ;
-    ImagePattern imagePatternBack2;
-
-    FileInputStream inputDos3;
-    Image imageBack3 ;
-    ImagePattern imagePatternBack3;
-
     FileInputStream inputGauche;
     Image imageGauche;
     ImagePattern imagePatternGauche;
@@ -148,23 +142,23 @@ public class HelloApplication extends Application {
     Reflection reflection;
     ImageView buttonRestartView;
     public int[][] tiles ={
-            {1,0,0,0,0,2,2,2,2,2,0,2,0,1,2,0,0,2,0,0,1},
-    {0,0,0,0,0,2,1,1,1,2,0,2,0,0,2,0,0,2,0,0,1},
+            {1,0,0,6,0,2,2,2,2,2,0,2,0,1,2,0,0,2,0,0,1},
+    {0,0,0,0,0,2,1,1,1,2,0,2,5,0,2,0,0,2,0,5,1},
     {0,0,0,0,0,2,2,2,1,2,2,1,0,0,2,0,0,2,0,0,1},
-    {0,0,0,0,1,2,0,2,1,2,2,1,0,1,1,0,1,2,0,0,1},
+    {0,0,0,0,1,2,0,2,1,2,2,1,0,1,1,0,1,2,0,3,1},
     {0,0,0,1,1,2,0,0,1,1,1,1,1,1,2,1,0,2,1,1,1},
     {0,0,1,1,2,2,0,0,0,0,2,1,2,2,2,0,0,2,1,1,1},
     {0,1,1,2,2,0,0,0,0,0,2,1,2,0,0,0,0,2,0,0,1},
     {2,1,2,2,0,0,0,0,0,0,2,2,2,0,0,0,0,2,0,0,1},
-    {2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1},
+    {2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,5,0,1},
     {2,2,2,1,0,0,0,0,1,1,0,0,0,0,0,0,0,2,0,0,1},
     {0,1,2,1,0,1,0,0,1,1,0,0,0,0,0,0,0,2,0,0,1},
     {0,1,2,0,1,1,1,2,1,1,2,2,2,2,2,2,2,2,2,2,1},
     {1,1,2,0,0,1,2,2,2,2,2,2,2,2,2,1,1,1,1,2,1},
-    {2,2,2,0,0,0,2,1,2,0,0,0,0,0,2,1,2,0,1,2,1},
-    {0,2,2,0,0,0,0,0,2,0,0,0,0,0,2,1,2,0,1,2,1},
-    {0,2,2,0,0,0,1,1,2,0,0,0,0,2,2,1,2,0,1,2,1},
-    {0,2,2,1,0,0,1,1,2,0,0,0,0,2,1,1,2,0,1,2,1},
+    {4,1,2,0,0,0,2,1,2,0,0,0,0,0,2,1,2,4,1,2,1},
+    {2,1,1,0,0,0,0,0,2,0,0,3,0,0,2,1,2,0,1,2,1},
+    {2,2,1,0,5,0,1,1,2,0,0,0,0,2,2,1,2,0,1,2,1},
+    {0,2,2,1,0,0,1,1,2,0,5,0,0,2,1,1,2,5,1,2,1},
     {0,2,2,1,1,1,1,1,2,0,0,0,0,2,1,1,2,0,1,2,1},
     {0,2,2,2,2,2,2,2,2,0,0,0,0,2,2,2,1,0,1,2,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1,0,1}
@@ -195,21 +189,11 @@ public class HelloApplication extends Application {
         timertextSeconde =new Text();
         timertextSecondeDizaine = new Text();
 
-        inputFace = new FileInputStream("src/Images/Bomberman/bomberman_face.png");
-        imageFace = new Image(inputFace);
-        imagePatternFace = new ImagePattern(imageFace);
+
 
         inputDos = new FileInputStream("src/Images/Bomberman/bomberman_dos.png");
         imageBack = new Image(inputDos);
         imagePatternBack = new ImagePattern(imageBack);
-
-        inputDos2 = new FileInputStream("src/Images/Bomberman/bomberman_dos_2.png");
-        imageBack2 = new Image(inputDos2);
-        imagePatternBack2 = new ImagePattern(imageBack2);
-
-        inputDos3 = new FileInputStream("src/Images/Bomberman/bomberman_dos_3.png");
-        imageBack3 = new Image(inputDos3);
-        imagePatternBack3 = new ImagePattern(imageBack3);
 
         inputGauche = new FileInputStream("src/Images/Bomberman/bomberman_gauche.png");
         imageGauche = new Image(inputGauche);
@@ -381,19 +365,47 @@ public class HelloApplication extends Application {
 
     }
 
-    public void map(){
-        //ArrayList<String>[][] ze = new ArrayList[27][20];
-        //ze[1][1].add("1");
-        //ze[2][1].add("test");
-        //System.out.println(ze[1][1]);
+    public void isNextABomb(Group group, List<ImageView> listBombs, Circle bomberman){
+
+        ImageView bombTempToRemove = null;
+
+        for(ImageView bombe : listBombs){
+            if(bomberman.getCenterX()+bomberman.getRadius()==bombe.getX() && bomberman.getCenterY()+bomberman.getRadius()==bombe.getY()
+            || bomberman.getCenterX()+bomberman.getRadius()+40>=bombe.getX() && bombe.getX()>=bomberman.getCenterX()-bomberman.getRadius()-40
+            && bomberman.getCenterY()+bomberman.getRadius()+40>=bombe.getY() && bombe.getY()>=bomberman.getCenterY()-bomberman.getRadius()-40)
+            {
+                bombTempToRemove = bombe;
+                group.getChildren().remove(bombe);
+                bombint +=7;
 
 
+            }
+            if(bombTempToRemove!=null){
+                listBombs.remove(bombTempToRemove);
+            }
+        }
 
 
+    }
+    public void isNextACoin(Group group, List<ImageView> listBagOfCoin, Circle bomberman){
+
+        ImageView bagTempToRemove = null;
+
+        for(ImageView coin : listBagOfCoin){
+            if(bomberman.getCenterX()+bomberman.getRadius()==coin.getX() && bomberman.getCenterY()+bomberman.getRadius()==coin.getY()
+                    || bomberman.getCenterX()+bomberman.getRadius()+40>=coin.getX() && coin.getX()>=bomberman.getCenterX()-bomberman.getRadius()-40
+                    && bomberman.getCenterY()+bomberman.getRadius()+40>=coin.getY() && coin.getY()>=bomberman.getCenterY()-bomberman.getRadius()-40)
+            {
+                bagTempToRemove = coin;
+                group.getChildren().remove(coin);
+                score +=10;
 
 
-
-
+            }
+            if(bagTempToRemove!=null){
+                listBagOfCoin.remove(bagTempToRemove);
+            }
+        }
 
 
     }
@@ -446,6 +458,15 @@ public class HelloApplication extends Application {
         //}catch(IOException e){
 
         //}
+
+    }
+    public void isAllEnemiesDied(List<Circle> listEnnemy){
+
+        if(listEnnemy.size()==1){
+            System.exit(0);
+            System.out.println("Tous morts");
+
+        }
 
     }
     public void music(){
@@ -561,8 +582,6 @@ public class HelloApplication extends Application {
                 gamePaused = false;
                 tl.play();
                 coin.play();
-                highScore();
-                map();
                 event.consume();
             }
         });
@@ -690,11 +709,35 @@ public class HelloApplication extends Application {
     }
     private void runbombe(){
 
-            musicExplosion();
+            //musicExplosion();
             group.getChildren().remove(bombeviewgif);
             isNextPositionAWall(groupGame, listWall2,bombeviewgif);
+            isEnnemyInExplosion(groupGame,listEnnemy,bombeviewgif);
 
             isAllowedBomb =true;
+
+    }
+
+    private void isEnnemyInExplosion(Group group, List<Circle> listEnnemy, ImageView bombeviewgif){
+
+
+
+
+        Circle ennemyTempToRemove = null;
+        for (Circle ennemy : listEnnemy){
+            if(ennemy.getCenterX() == bombeviewgif.getX() && ennemy.getCenterY() == bombeviewgif.getY()
+            || bombeviewgif.getX()+50>= ennemy.getCenterX() && ennemy.getCenterX()>= bombeviewgif.getX()-50
+                    && bombeviewgif.getY()+50>= ennemy.getCenterY() && ennemy.getCenterY()>=bombeviewgif.getY()-50
+            ){
+                ennemyTempToRemove = ennemy;
+                group.getChildren().remove(ennemy);
+                score +=5;
+                System.out.println(listEnnemy.size());
+            }
+        }
+        if(ennemyTempToRemove!=null){
+            listEnnemy.remove(ennemyTempToRemove);
+        }
 
     }
 
@@ -706,6 +749,10 @@ public class HelloApplication extends Application {
         Random r = new Random();
         group.getChildren().remove(bombes);
         group.getChildren().remove(scores);
+
+        isNextABomb(groupGame,listBombs,bomberman);
+        isNextACoin(groupGame,listBagOfCoin,bomberman);
+        isAllEnemiesDied(listEnnemy);
 
 
 
@@ -741,41 +788,41 @@ public class HelloApplication extends Application {
                 double difX = ennemy.getCenterX() - bomberman.getCenterX();
                 double difY = ennemy.getCenterY() - bomberman.getCenterY();
                 if(Math.abs(difX) < Math.abs(difY)){
-                    if(difY>0) ennemy.setCenterY(ennemy.getCenterY()-12);
-                    else ennemy.setCenterY(ennemy.getCenterY()+12);
+                    if(difY>0) ennemy.setCenterY(ennemy.getCenterY()-5);
+                    else ennemy.setCenterY(ennemy.getCenterY()+5);
                 }
                 else {
-                    if (difX>0) ennemy.setCenterX(ennemy.getCenterX()-12);
-                    else ennemy.setCenterX(ennemy.getCenterX()+12);
+                    if (difX>0) ennemy.setCenterX(ennemy.getCenterX()-5);
+                    else ennemy.setCenterX(ennemy.getCenterX()+5);
                 }
             }
             else{
                 switch (r.nextInt(4)){
                     case 0:
-                        if(ennemy.getCenterX() +12 < 850){
-                            ennemy.setCenterX(ennemy.getCenterX()+12);
+                        if(ennemy.getCenterX() +5 < 850){
+                            ennemy.setCenterX(ennemy.getCenterX()+5);
                         }
                         break;
                     case 1:
-                        if (ennemy.getCenterX() - 12 > 0) {
-                            ennemy.setCenterX(ennemy.getCenterX() - 12);
+                        if (ennemy.getCenterX() - 5 > 0) {
+                            ennemy.setCenterX(ennemy.getCenterX() - 5);
                         }
                         break;
                     case 2:
-                        if (ennemy.getCenterY() - 12 > 0) {
-                            ennemy.setCenterY(ennemy.getCenterY() - 12);
+                        if (ennemy.getCenterY() - 5 > 0) {
+                            ennemy.setCenterY(ennemy.getCenterY() - 5);
                         }
                         break;
                     case 3:
-                        if (ennemy.getCenterY() + 12 < HEIGHT) {
-                            ennemy.setCenterY(ennemy.getCenterY() + 12);
+                        if (ennemy.getCenterY() + 5 < HEIGHT) {
+                            ennemy.setCenterY(ennemy.getCenterY() + 5);
                         }
                         break;
 
                 }
             }
             if(ennemy.getCenterX()==bomberman.getCenterX() & ennemy.getCenterY()==bomberman.getCenterY()){
-                tl.pause();
+                //tl.pause();
                 System.out.println("Game Over");
             }
         }
@@ -787,6 +834,7 @@ public class HelloApplication extends Application {
         iTimerfix +=1;
         Timer();
         System.out.println(seconde);
+
 
         //Affichage du timer
 
@@ -871,21 +919,9 @@ public class HelloApplication extends Application {
             boolean isMouvOk = !gamePaused;
 
             boolean canFront = false;
-            boolean canFront2 = false;
-            boolean canFront3 = false;
-
             boolean canback = true;
-            boolean canback2 = true;
-            boolean canback3 = true;
-
             boolean canLeft = true;
-            boolean canLeft2 = true;
-            boolean canLeft3 = true;
-
             boolean canRight = true;
-            boolean canRight2 = true;
-            boolean canRight3 = true;
-
             if(isAllowedBomb=true){
                 switch(keyEntered){
                     case 'B':
@@ -906,34 +942,23 @@ public class HelloApplication extends Application {
             }
             switch (keyEntered){
                 case 'Z' :
-                    if(canback3=true){
-                        System.out.println("entré dans canback3");
-                        bomberman.setFill(imagePatternBack2);
-                        canback3=false;
-                        canback=true;
 
-                    }
 
-                    if(canback2=true){
-                        System.out.println("entré dans canback2");
-                        bomberman.setFill(imagePatternBack3);
 
-                        canback2 =false;
-                        canback3 = true;
-
-                    }
                     if(canback = true){
                         bomberman.setFill(imagePatternBack);
+                        System.out.println("entré dans canback1");
                         canFront =true;
                         canLeft =true;
                         canRight =true;
 
                         canback = false;
-                        canback2 =true;
-                        canback3=false;
+
 
 
                     }
+
+
 
 
 
@@ -957,7 +982,7 @@ public class HelloApplication extends Application {
                         }
 
 
-                        bomberman.setCenterY(bomberman.getCenterY() - bomberman.getRadius());
+                        bomberman.setCenterY(bomberman.getCenterY() - 10);
                     }
                     break;
                 case 'S' :
@@ -990,7 +1015,7 @@ public class HelloApplication extends Application {
                             bomberman.setCenterY(HEIGHT - bomberman.getRadius());
                         }
 
-                        bomberman.setCenterY(bomberman.getCenterY() + bomberman.getRadius());
+                        bomberman.setCenterY(bomberman.getCenterY() + 10);
                     }
                     break;
                 case 'Q' :
@@ -1022,7 +1047,7 @@ public class HelloApplication extends Application {
                             bomberman.setCenterX(22 + bomberman.getRadius());
                         }
 
-                        bomberman.setCenterX(bomberman.getCenterX() - bomberman.getRadius());
+                        bomberman.setCenterX(bomberman.getCenterX() - 10);
                     }
                     break;
                 case 'D' :
@@ -1053,7 +1078,7 @@ public class HelloApplication extends Application {
                             bomberman.setCenterX(840 - bomberman.getRadius());
                         }
 
-                        bomberman.setCenterX(bomberman.getCenterX() + bomberman.getRadius());
+                        bomberman.setCenterX(bomberman.getCenterX() + 10);
                     }
                     break;
                 case'P':
@@ -1082,6 +1107,7 @@ public class HelloApplication extends Application {
 
 
     }
+
 
 
     private Group initializeGroupGame() throws FileNotFoundException {
@@ -1120,13 +1146,6 @@ public class HelloApplication extends Application {
         hearts.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
         group.getChildren().add(hearts);
 
-
-
-
-
-
-
-
         //Affichage de la bombe sur le terrain
         bombegif = new Image("https://www.informatiquegifs.com/explosion/gifs-explosion-8.gif",false);
         bombeviewgif = new ImageView(bombegif);
@@ -1134,41 +1153,112 @@ public class HelloApplication extends Application {
         bombeviewgif.setFitHeight(40);
         bombeviewgif.setPreserveRatio(true);
 
-
-
-
-        //Afficage Bomberman
-        bomberman = new Circle(70,30,12);
-
-
-        bomberman.setFill(imagePatternFace);
-
-        group.getChildren().add(bomberman);
-        listWalls = new ArrayList<List>();
-
         //Création du mur pas cassable
         listWall = new ArrayList<Rectangle>();
-        Image wall = new Image("http://images.shoutwiki.com/bomberpedia/3/38/SoftBlock.png", false);
+        FileInputStream inputWall_Unbreakable = new FileInputStream("src/Images/wall/wall_unbreakable.png");
+        Image wall = new Image(inputWall_Unbreakable);
 
         listWall2 = new ArrayList<Rectangle>();
-        Image wall2 = new Image("http://images.shoutwiki.com/bomberpedia/thumb/a/af/HardBlock.png/200px-HardBlock.png", false);
+        FileInputStream inputWall_Breakable = new FileInputStream("src/Images/wall/wall_breakable.png");
+        Image wall2 = new Image(inputWall_Breakable);
+
+        listBombs = new ArrayList<ImageView>();
+        FileInputStream inputBombs = new FileInputStream("src/Images/Bombes/bombe_obtenable.png");
+        Image bombeImage = new Image(inputBombs);
+
+        listBagOfCoin = new ArrayList<ImageView>();
+        FileInputStream inputBagOfCoins = new FileInputStream("src/Images/Coins/bag_coin.png");
+        Image coinImage = new Image(inputBagOfCoins);
+
+        listEnnemy = new ArrayList<Circle>();
+
+        FileInputStream ennemyInput1 = new FileInputStream("src/Images/ennemy/enemy1.png");
+        Image ennemy1Skin = new Image(ennemyInput1);
+
+        FileInputStream ennemyInput2 = new FileInputStream("src/Images/ennemy/enemy2.png");
+        Image ennemy2Skin = new Image(ennemyInput2);
+
+        FileInputStream ennemyInput3 = new FileInputStream("src/Images/ennemy/enemy3.png");
+        Image ennemy3Skin = new Image(ennemyInput3);
+
+        FileInputStream ennemyInput4 = new FileInputStream("src/Images/ennemy/enemy4.png");
+        Image ennemy4Skin = new Image(ennemyInput4);
+
+        FileInputStream ennemyInput5 = new FileInputStream("src/Images/ennemy/enemy5.png");
+        Image ennemy5Skin = new Image(ennemyInput5);
+
+        FileInputStream ennemyInput6 = new FileInputStream("src/Images/ennemy/enemy6.png");
+        Image ennemy6Skin = new Image(ennemyInput6);
+
+        Random randomSkin = new Random();
+
+
+
 
 
         for(int x=0; x< tiles.length;x++){
             for(int y=0; y< tiles[x].length;y++){
-                if(tiles[x][y]==1){
+                if(tiles[x][y]==1){//Correspond au briques pas casable
                     Rectangle point = new Rectangle(y*40,x*40,40, 40);
                     point.setFill(new ImagePattern(wall));
                     listWall.add(point);
 
-                }else if(tiles[x][y]==2){
+                }else if(tiles[x][y]==2){ // Correspond au briques cassable
                     Rectangle point = new Rectangle(y*40,x*40,40, 40);
                     point.setFill(new ImagePattern(wall2));
                     listWall2.add(point);
 
+                }else if(tiles[x][y]==3){ // Correspond au Bombe que le joueur peut récupérer
+                    ImageView bombesView = new ImageView(bombeImage);
+                    bombesView.setX(y*40);
+                    bombesView.setY(x*40);
+                    bombesView.setFitWidth(40);
+                    bombesView.setFitHeight(40);
+                    bombesView.setPreserveRatio(true);
+                    listBombs.add(bombesView);
+                }else if(tiles[x][y]==4){// Correspond au sac de pièce que le joueur peut récupérer
+                    ImageView coinView= new ImageView(coinImage);
+                    coinView.setX(y*40);
+                    coinView.setY(x*40);
+                    coinView.setFitWidth(40);
+                    coinView.setFitHeight(40);
+                    coinView.setPreserveRatio(true);
+                    listBagOfCoin.add(coinView);
+                }else if(tiles[x][y]==5){//Correspond à la position des ennemies
 
+                    Circle ennemy = new Circle(y*40,x*40,15);
+                    switch (randomSkin.nextInt(6)){
+                        case 0:
+                            ennemy.setFill(new ImagePattern(ennemy1Skin));
+                            break;
+                        case 1:
+                            ennemy.setFill(new ImagePattern(ennemy2Skin));
+                            break;
+                        case 2:
+                            ennemy.setFill(new ImagePattern(ennemy3Skin));
+                            break;
+                        case 3:
+                            ennemy.setFill(new ImagePattern(ennemy4Skin));
+                            break;
+                        case 4:
+                            ennemy.setFill(new ImagePattern(ennemy5Skin));
+                            break;
+                        case 5:
+                            ennemy.setFill(new ImagePattern(ennemy6Skin));
+                            break;
 
+                    }
 
+                    listEnnemy.add(ennemy);
+
+                }else if(tiles[x][y]==6) {//Correspond à la position du joueur
+                    bomberman = new Circle(y*40,x*40,15);
+                    inputFace = new FileInputStream("src/Images/Bomberman/bomberman_face.png");
+                    imageFace = new Image(inputFace);
+                    imagePatternFace = new ImagePattern(imageFace);
+                    bomberman.setFill(imagePatternFace);
+
+                    group.getChildren().add(bomberman);
                 }
             }
         }
@@ -1180,66 +1270,15 @@ public class HelloApplication extends Application {
 
             group.getChildren().add(p);
         }
-        listWalls.add(listWall);
-        listWalls.add(listWall2);
-
-        //Affichage des ennemies
-        Circle ennemy1 = new Circle(94,90,15);
-        Circle ennemy2 = new Circle(118,714,15);
-        Circle ennemy3 = new Circle(700,700,15);
-        Circle ennemy4 = new Circle(700,700,15);
-        Circle ennemy5 = new Circle(700,700,15);
-        Circle ennemy6 = new Circle(700,700,15);
-
-
-        FileInputStream ennemyInput1 = new FileInputStream("src/Images/ennemy/enemy1.png");
-        Image ennemy1Skin = new Image(ennemyInput1);
-        ennemy1.setFill(new ImagePattern(ennemy1Skin));
-
-        FileInputStream ennemyInput2 = new FileInputStream("src/Images/ennemy/enemy2.png");
-        Image ennemy2Skin = new Image(ennemyInput2);
-        ennemy2.setFill(new ImagePattern(ennemy2Skin));
-
-        FileInputStream ennemyInput3 = new FileInputStream("src/Images/ennemy/enemy3.png");
-        Image ennemy3Skin = new Image(ennemyInput3);
-        ennemy3.setFill(new ImagePattern(ennemy3Skin));
-
-        FileInputStream ennemyInput4 = new FileInputStream("src/Images/ennemy/enemy4.png");
-        Image ennemy4Skin = new Image(ennemyInput4);
-        ennemy4.setFill(new ImagePattern(ennemy4Skin));
-
-        FileInputStream ennemyInput5 = new FileInputStream("src/Images/ennemy/enemy5.png");
-        Image ennemy5Skin = new Image(ennemyInput5);
-        ennemy5.setFill(new ImagePattern(ennemy5Skin));
-
-        FileInputStream ennemyInput6 = new FileInputStream("src/Images/ennemy/enemy6.png");
-        Image ennemy6Skin = new Image(ennemyInput6);
-        ennemy6.setFill(new ImagePattern(ennemy6Skin));
-
-
-        listEnnemy = new ArrayList<Circle>();
-        listEnnemy.add(ennemy1);
-        listEnnemy.add(ennemy2);
-        listEnnemy.add(ennemy3);
-        listEnnemy.add(ennemy4);
-        listEnnemy.add(ennemy5);
-        listEnnemy.add(ennemy6);
-
-
-
-        group.getChildren().add(ennemy1);
-        group.getChildren().add(ennemy2);
-        group.getChildren().add(ennemy3);
-        group.getChildren().add(ennemy4);
-        group.getChildren().add(ennemy5);
-        group.getChildren().add(ennemy6);
-
-
-        //Il faut que la position x et y des ennemies soient un multiple de 70+12 pour x et 30 +12 pour y exemple(82,42) ou (94,54
-
-
-
-
+        for (ImageView p : listBombs){
+            group.getChildren().add(p);
+        }
+        for (ImageView p : listBagOfCoin){
+            group.getChildren().add(p);
+        }
+        for (Circle p :listEnnemy){
+            group.getChildren().add(p);
+        }
 
 
 

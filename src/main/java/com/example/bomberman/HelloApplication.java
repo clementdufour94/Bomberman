@@ -8,10 +8,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,13 +29,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 
 import java.io.*;
@@ -49,6 +53,7 @@ public class HelloApplication extends Application {
 
     Stage primaryStage;
     Group groupGame;
+    Group groupSettings;
 
     List<Rectangle> listWall;
     List<Rectangle> listWall2;
@@ -56,6 +61,7 @@ public class HelloApplication extends Application {
     List<ImageView> listBagOfCoin;
     Scene sceneGame;
     Scene scenePause;
+    Scene sceneSetting;
     List<Circle>listEnnemy;
     Circle bomberman;
     static int bombint = 9;
@@ -71,10 +77,12 @@ public class HelloApplication extends Application {
     FileWriter fileWriter;
     FileReader fileReader;
     JSONParser jsonParser;
+    int restart = 0;
 
     MediaPlayer mediaPlayer;
     MediaPlayer playerHover;
     MediaPlayer playerExplosion;
+    boolean isGameOver;
 
 
 
@@ -114,6 +122,7 @@ public class HelloApplication extends Application {
     ImageView explosion6View;
     ImageView explosion0View;
     Integer variable = 0;
+    Double scoreFinal;
 
     ImageView coin1View;
     ImageView coin2View;
@@ -141,7 +150,16 @@ public class HelloApplication extends Application {
     Integer variableCoin = 0;
     Reflection reflection;
     ImageView buttonRestartView;
-    public int[][] tiles ={
+    TextArea nameArea;
+    String pseudoPlayer;
+    Text highScoreText2;
+    Text highScoreText3;
+    GaussianBlur gaussianBlur;
+
+    Timeline invincible;
+    Boolean isInvincible = false;
+    public int[][] tiles;
+    public int[][] map1 ={
             {1,0,0,6,0,2,2,2,2,2,0,2,0,1,2,0,0,2,0,0,1},
     {0,0,0,0,0,2,1,1,1,2,0,2,5,0,2,0,0,2,0,5,1},
     {0,0,0,0,0,2,2,2,1,2,2,1,0,0,2,0,0,2,0,0,1},
@@ -163,205 +181,179 @@ public class HelloApplication extends Application {
     {0,2,2,2,2,2,2,2,2,0,0,0,0,2,2,2,1,0,1,2,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1,0,1}
 };
+    public int[][] map2 = {
+            {1,1,1,0,0,2,0,0,1,0,0,4,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,2,0,0,1,0,5,0,5,0,0,0,0,0,0,0,1},
+            { 1,4,0,0,0,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,5,0,0,0,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+            { 1,3,0,0,0,2,0,1,1,1,1,1,1,1,1,2,0,0,0,0,1},
+            {1,0,0,0,2,0,0,1,0,0,0,0,0,0,1,2,0,0,0,0,1},
+            { 1,2,0,0,2,0,0,1,0,0,0,0,0,0,1,2,0,0,2,2,1},
+            {1,1,2,0,2,5,2,1,0,0,0,0,0,0,1,2,0,2,0,0,1},
+            {0,0,1,0,2,2,0,1,0,0,6,0,0,0,1,2,2,0,0,3,1},
+            {0,0,0,1,2,2,3,1,0,0,0,0,0,0,1,2,0,0,0,0,1},
+            {0,0,0,0,1,2,0,1,0,0,0,0,0,0,1,2,0,0,0,0,1},
+            {2,2,0,2,0,1,2,1,1,2,2,2,1,1,1,2,2,2,2,2,1},
+            {0,0,2,0,0,2,0,0,2,2,2,2,2,0,0,0,2,2,2,2,1},
+            {5,4,2,2,2,2,0,0,2,0,0,3,2,0,0,0,0,2,2,2,1},
+            {0,0,2,0,0,2,0,0,2,0,0,0,2,0,0,0,0,0,2,2,1},
+            {2,2,0,2,0,2,0,0,2,0,5,0,2,0,0,0,0,0,2,0,1},
+            {0,0,0,0,0,1,0,0,2,0,0,0,2,0,0,0,0,0,0,0,1},
+            { 0,0,0,0,1,0,0,0,2,0,0,0,2,0,0,0,2,0,0,5,1},
+            {0,0,0,1,0,0,0,0,2,0,0,0,2,0,0,2,0,2,0,0,1},
+            {1,1,1,0,0,0,0,0,2,0,0,0,2,2,2,0,0,0,2,2,1}
+
+
+    };
+
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage)  {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        primaryStage = stage;
-        Scene scene = new Scene(fxmlLoader.load(), 850, HEIGHT) ;
+        try{
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+            primaryStage = stage;
+            Scene scene = new Scene(fxmlLoader.load(), 850, HEIGHT) ;
 
-        reflection = new Reflection();
-        reflection.setFraction(1);
-        //music();
 
-        tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
-        explosion = new Timeline(new KeyFrame(Duration.millis(180),e->runexplosion()));
-        coin = new Timeline(new KeyFrame(Duration.millis(150),e->runCoin()));
-        coin.setCycleCount(Timeline.INDEFINITE);
-        explosion.setCycleCount(Timeline.INDEFINITE);
-        explosion.play();
-        tl.setCycleCount(Timeline.INDEFINITE);
-        bombe = new Timeline(new KeyFrame(Duration.seconds(1),e->runbombe()));
-        bombe.setCycleCount(1);
 
+            stage.setTitle("Bomberman!");
 
-        timertextSeconde =new Text();
-        timertextSecondeDizaine = new Text();
+            groupGame = initializeGroupGame();
+            sceneGame = new Scene(groupGame, WIDTH, HEIGHT, Color.GRAY);
 
+            //Ici
 
+            if(restart==0){
+                buttonMenu();
+                sceneMenu = new Scene(groupMenu, WIDTH, HEIGHT, Color.GRAY);
 
-        inputDos = new FileInputStream("src/Images/Bomberman/bomberman_dos.png");
-        imageBack = new Image(inputDos);
-        imagePatternBack = new ImagePattern(imageBack);
 
-        inputGauche = new FileInputStream("src/Images/Bomberman/bomberman_gauche.png");
-        imageGauche = new Image(inputGauche);
-        imagePatternGauche = new ImagePattern(imageGauche);
+                stage.setScene(sceneMenu);
+                stage.show();
+
+            }else if(restart==1){
+                primaryStage.setScene(sceneGame);
+
+                gamePaused = false;
+                tl.play();
+                coin.play();
+                restart=0;
+                primaryStage.show();
+            }
+
+            FileInputStream inputExplosion1 = new FileInputStream("src/Images/Bombes/Explosions/explosion_1.png");
+            Image explosion1 = new Image(inputExplosion1,340,340,true,false);
+            explosion1View = new ImageView(explosion1);
+            explosion1View.setX(-350);
+            explosion1View.setY(-100);
+            explosion1View.setEffect(reflection);
 
-        inputDroite = new FileInputStream("src/Images/Bomberman/bomberman_droite.png");
-        imageDroite = new Image(inputDroite);
-        imagePatternDroite = new ImagePattern(imageDroite);
 
 
+            FileInputStream inputExplosion2 = new FileInputStream("src/Images/Bombes/Explosions/explosion_2.png");
+            Image explosion2 = new Image(inputExplosion2,340,340,true,false);
+            explosion2View = new ImageView(explosion2);
+            explosion2View.setX(-350);
+            explosion2View.setY(-100);
+            explosion2View.setEffect(reflection);
 
 
-        timertextMinute =new Text();
-        timertextMinuteDizaine = new Text();
+            FileInputStream inputExplosion3 = new FileInputStream("src/Images/Bombes/Explosions/explosion_3.png");
+            Image explosion3 = new Image(inputExplosion3,340,340,true,false);
+            explosion3View = new ImageView(explosion3);
+            explosion3View.setX(-350);
+            explosion3View.setY(-100);
+            explosion3View.setEffect(reflection);
 
-        timertextSeconde.setX(1000);
-        timertextSeconde.setY(45);
 
-        timertextSecondeDizaine.setX(980);
-        timertextSecondeDizaine.setY(45);
+            FileInputStream inputExplosion4 = new FileInputStream("src/Images/Bombes/Explosions/explosion_4.png");
+            Image explosion4 = new Image(inputExplosion4,340,340,true,false);
+            explosion4View = new ImageView(explosion4);
+            explosion4View.setX(-350);
+            explosion4View.setY(-100);
+            explosion4View.setEffect(reflection);
 
-        timerSeparator = new Text(":");
-        timerSeparator.setX(965);
-        timerSeparator.setY(45);
 
-        timertextMinute.setX(940);
-        timertextMinute.setY(45);
+            FileInputStream inputExplosion5 = new FileInputStream("src/Images/Bombes/Explosions/explosion_5.png");
+            Image explosion5 = new Image(inputExplosion5,340,340,true,false);
+            explosion5View = new ImageView(explosion5);
+            explosion5View.setX(-350);
+            explosion5View.setY(-100);
+            explosion5View.setEffect(reflection);
 
-        timertextMinuteDizaine.setX(920);
-        timertextMinuteDizaine.setY(45);
 
-        stage.setTitle("Bomberman!");
-        buttonMenu();
-        sceneMenu = new Scene(groupMenu, WIDTH, HEIGHT, Color.GRAY);
+            FileInputStream inputExplosion6 = new FileInputStream("src/Images/Bombes/Explosions/explosion_6.png");
+            Image explosion6 = new Image(inputExplosion6,340,340,true,false);
+            explosion6View = new ImageView(explosion6);
+            explosion6View.setX(-350);
+            explosion6View.setY(-100);
+            explosion6View.setEffect(reflection);
 
-        stage.setScene(sceneMenu);
-        stage.show();
-        groupGame = initializeGroupGame();
-        sceneGame = new Scene(groupGame, WIDTH, HEIGHT, Color.GRAY);
-        //Ici
+            FileInputStream inputExplosion0 = new FileInputStream("src/Images/Bombes/bombesprite.png");
+            Image explosion0 = new Image(inputExplosion0,340,340,true,false);
+            explosion0View = new ImageView(explosion0);
+            explosion0View.setX(-350);
+            explosion0View.setY(-100);
+            explosion0View.setEffect(reflection);
 
 
+            FileInputStream inputCoin1 = new FileInputStream("src/Images/Coins/star coin rotate 1.png");
+            Image coin1 = new Image(inputCoin1,70,70,true,false);
+            coin1View = new ImageView(coin1);
+            coin1View.setX(880);
+            coin1View.setY(300);
+            coin1View.setEffect(reflection);
 
+            FileInputStream inputCoin2 = new FileInputStream("src/Images/Coins/star coin rotate 2.png");
+            Image coin2 = new Image(inputCoin2,70,70,true,false);
+            coin2View = new ImageView(coin2);
+            coin2View.setX(880);
+            coin2View.setY(300);
+            coin2View.setEffect(reflection);
 
+            FileInputStream inputCoin3 = new FileInputStream("src/Images/Coins/star coin rotate 3.png");
+            Image coin3 = new Image(inputCoin3,70,70,true,false);
+            coin3View = new ImageView(coin3);
+            coin3View.setX(880);
+            coin3View.setY(300);
+            coin3View.setEffect(reflection);
 
-        FileInputStream inputExplosion1 = new FileInputStream("src/Images/Bombes/Explosions/explosion_1.png");
-        Image explosion1 = new Image(inputExplosion1,340,340,true,false);
-         explosion1View = new ImageView(explosion1);
-        explosion1View.setX(-350);
-        explosion1View.setY(-100);
-        explosion1View.setEffect(reflection);
+            FileInputStream inputCoin4 = new FileInputStream("src/Images/Coins/star coin rotate 4.png");
+            Image coin4 = new Image(inputCoin4,70,70,true,false);
+            coin4View = new ImageView(coin4);
+            coin4View.setX(880);
+            coin4View.setY(300);
+            coin4View.setEffect(reflection);
 
+            FileInputStream inputCoin5 = new FileInputStream("src/Images/Coins/star coin rotate 5.png");
+            Image coin5 = new Image(inputCoin5,70,70,true,false);
+            coin5View = new ImageView(coin5);
+            coin5View.setX(880);
+            coin5View.setY(300);
+            coin5View.setEffect(reflection);
 
-        FileInputStream inputExplosion2 = new FileInputStream("src/Images/Bombes/Explosions/explosion_2.png");
-        Image explosion2 = new Image(inputExplosion2,340,340,true,false);
-         explosion2View = new ImageView(explosion2);
-        explosion2View.setX(-350);
-        explosion2View.setY(-100);
-        explosion2View.setEffect(reflection);
+            FileInputStream inputCoin6 = new FileInputStream("src/Images/Coins/star coin rotate 6.png");
+            Image coin6 = new Image(inputCoin6,70,70,true,false);
+            coin6View = new ImageView(coin6);
+            coin6View.setX(880);
+            coin6View.setY(300);
+            coin6View.setEffect(reflection);
 
 
-        FileInputStream inputExplosion3 = new FileInputStream("src/Images/Bombes/Explosions/explosion_3.png");
-        Image explosion3 = new Image(inputExplosion3,340,340,true,false);
-         explosion3View = new ImageView(explosion3);
-        explosion3View.setX(-350);
-        explosion3View.setY(-100);
-        explosion3View.setEffect(reflection);
 
 
-        FileInputStream inputExplosion4 = new FileInputStream("src/Images/Bombes/Explosions/explosion_4.png");
-        Image explosion4 = new Image(inputExplosion4,340,340,true,false);
-         explosion4View = new ImageView(explosion4);
-        explosion4View.setX(-350);
-        explosion4View.setY(-100);
-        explosion4View.setEffect(reflection);
+            buttonPause();
 
 
-        FileInputStream inputExplosion5 = new FileInputStream("src/Images/Bombes/Explosions/explosion_5.png");
-        Image explosion5 = new Image(inputExplosion5,340,340,true,false);
-         explosion5View = new ImageView(explosion5);
-        explosion5View.setX(-350);
-        explosion5View.setY(-100);
-        explosion5View.setEffect(reflection);
+            handleGameEvent();
 
+        }catch (IOException e){
+            System.out.println("erreur" + e);
 
-        FileInputStream inputExplosion6 = new FileInputStream("src/Images/Bombes/Explosions/explosion_6.png");
-        Image explosion6 = new Image(inputExplosion6,340,340,true,false);
-         explosion6View = new ImageView(explosion6);
-        explosion6View.setX(-350);
-        explosion6View.setY(-100);
-        explosion6View.setEffect(reflection);
+        }
 
-        FileInputStream inputExplosion0 = new FileInputStream("src/Images/Bombes/bombesprite.png");
-        Image explosion0 = new Image(inputExplosion0,340,340,true,false);
-         explosion0View = new ImageView(explosion0);
-         explosion0View.setX(-350);
-        explosion0View.setY(-100);
-         explosion0View.setEffect(reflection);
 
-
-        FileInputStream inputCoin1 = new FileInputStream("src/Images/Coins/star coin rotate 1.png");
-        Image coin1 = new Image(inputCoin1,70,70,true,false);
-        coin1View = new ImageView(coin1);
-        coin1View.setX(880);
-        coin1View.setY(300);
-        coin1View.setEffect(reflection);
-
-        FileInputStream inputCoin2 = new FileInputStream("src/Images/Coins/star coin rotate 2.png");
-        Image coin2 = new Image(inputCoin2,70,70,true,false);
-        coin2View = new ImageView(coin2);
-        coin2View.setX(880);
-        coin2View.setY(300);
-        coin2View.setEffect(reflection);
-
-        FileInputStream inputCoin3 = new FileInputStream("src/Images/Coins/star coin rotate 3.png");
-        Image coin3 = new Image(inputCoin3,70,70,true,false);
-        coin3View = new ImageView(coin3);
-        coin3View.setX(880);
-        coin3View.setY(300);
-        coin3View.setEffect(reflection);
-
-        FileInputStream inputCoin4 = new FileInputStream("src/Images/Coins/star coin rotate 4.png");
-        Image coin4 = new Image(inputCoin4,70,70,true,false);
-        coin4View = new ImageView(coin4);
-        coin4View.setX(880);
-        coin4View.setY(300);
-        coin4View.setEffect(reflection);
-
-        FileInputStream inputCoin5 = new FileInputStream("src/Images/Coins/star coin rotate 5.png");
-        Image coin5 = new Image(inputCoin5,70,70,true,false);
-        coin5View = new ImageView(coin5);
-        coin5View.setX(880);
-        coin5View.setY(300);
-        coin5View.setEffect(reflection);
-
-        FileInputStream inputCoin6 = new FileInputStream("src/Images/Coins/star coin rotate 6.png");
-        Image coin6 = new Image(inputCoin6,70,70,true,false);
-        coin6View = new ImageView(coin6);
-        coin6View.setX(880);
-        coin6View.setY(300);
-        coin6View.setEffect(reflection);
-
-        //fileWriter = new FileWriter("test.json");
-        //fileReader = new FileReader("test.json");
-         jsonParser = new JSONParser();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        buttonPause();
-
-
-
-
-
-
-        handleGameEvent();
 
     }
 
@@ -410,28 +402,103 @@ public class HelloApplication extends Application {
 
     }
 
+
     public void highScore(){
 
-       // try {
 
-            //JSONObject jsonObj = (JSONObject) jsonParser(new FileReader("test.txt"));
-
-        //}catch (Exception e){
-        //System.out.println(e);
-
-        //}
-
-        //try{
+        Group highscoreGroup = new Group();
+        Scene highscoreScene = new Scene(highscoreGroup,WIDTH, HEIGHT, Color.GRAY);
+        Text highScoreText = new Text("Meilleur Score :");
+        highScoreText.setTextAlignment(TextAlignment.CENTER);
+        highScoreText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
 
 
 
-            //Insert dans fichier Fonctionnel
+        try{
 
-            //JSONObject obj = new JSONObject();
-            //obj.put(saisiePseudo.getText(),String.valueOf(score));
-            //fileWriter.write(obj.toString());
-            //fileWriter.flush();
-            //fileWriter.close();
+            fileReader = new FileReader("highscore.json");
+            ImageView buttonBackView = new ImageView(new Image((new FileInputStream("src/Images/Button/button_back.png")),150,150,true,false));
+
+
+
+            BufferedReader br = new BufferedReader(fileReader);
+
+            if(br.readLine() == null){ // Si le fichier Json est vide alors on le remplis
+                JSONObject obj = new JSONObject();
+                fileWriter = new FileWriter("highscore.json");
+                obj.put("name",pseudoPlayer);
+                obj.put("score",String.valueOf(scoreFinal.intValue()));
+                fileWriter.write(obj.toString());
+                fileWriter.flush();
+                fileWriter.close();
+            }else{ // Sinon on le lis et on récupère le meilleur score actuel
+                System.out.println("Fichier remplis");
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader("highscore.json"));
+                String value = (String) jsonObject.get("score");
+                String valueName = (String) jsonObject.get("name");
+                System.out.println(value);
+
+                if(scoreFinal.intValue()>=Double.parseDouble(value)){ // Si le score actuel est meilleur que le meilleur score affiché alors on le remplis
+                 System.out.println("Nouveau meilleur score");
+                    JSONObject obj = new JSONObject();
+                    fileWriter = new FileWriter("highscore.json");
+                    obj.put("name",pseudoPlayer);
+                    obj.put("score",String.valueOf(scoreFinal.intValue()));
+                    fileWriter.write(obj.toString());
+                    fileWriter.flush();
+                    fileWriter.close();
+
+                    highScoreText2 = new Text("name :" + " " + pseudoPlayer);
+                    highScoreText3 = new Text("score :" + String.valueOf(scoreFinal.intValue()));
+                    highScoreText2.setFont(Font.font("verdana",  FontPosture.REGULAR, 40));
+                    highScoreText3.setFont(Font.font("verdana",  FontPosture.REGULAR, 40));
+
+                 }else if(Double.parseDouble(value)>scoreFinal.intValue()){ // Sinon
+
+                 System.out.println("Dommage vous n'avez pas réussi à battre le meilleur score");
+                 highScoreText2 = new Text("name:"+" " + valueName);
+                 highScoreText3 = new Text("score :" + String.valueOf(value));
+                 highScoreText2.setFont(Font.font("verdana",  FontPosture.REGULAR, 40));
+                 highScoreText3.setFont(Font.font("verdana",  FontPosture.REGULAR, 40));
+                 }
+
+
+
+
+
+            }
+            buttonBackView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent event) {
+
+                    primaryStage.setScene(sceneMenu);
+
+                    explosion.play();
+                }
+            });
+            buttonBackView.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent event) {
+
+                    musicHover();
+                }
+            });
+            VBox vboxHightScore = new VBox(highScoreText,highScoreText2,highScoreText3);
+            vboxHightScore.setLayoutX(400);
+            vboxHightScore.setLayoutY(200);
+            vboxHightScore.setSpacing(5);
+            vboxHightScore.setAlignment(Pos.BASELINE_CENTER);
+
+
+            highscoreGroup.getChildren().add(vboxHightScore);
+            highscoreGroup.getChildren().add(buttonBackView);
+
+
+            primaryStage.setScene(highscoreScene);
+
 
             //DEBUT TEST
             //JSONObject obj = new JSONObject(file.toString());
@@ -455,20 +522,29 @@ public class HelloApplication extends Application {
             //ja.put(test);
             //ja.put(jo);
             //FIN TEST
-        //}catch(IOException e){
+        }catch(IOException e){
 
-        //}
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
 
     }
+
     public void isAllEnemiesDied(List<Circle> listEnnemy){
 
-        if(listEnnemy.size()==1){
-            System.exit(0);
-            System.out.println("Tous morts");
+        if(listEnnemy.size()==0){
+
+
+
+
+            Win();
+
 
         }
 
     }
+
     public void music(){
         String s ="screen.mp3";
         Media h = new Media(Paths.get(s).toUri().toString());
@@ -490,6 +566,151 @@ public class HelloApplication extends Application {
         playerExplosion = new MediaPlayer(h);
         playerExplosion.setCycleCount(1);
         playerExplosion.play();
+    }
+
+    private Group buttonSetting() throws FileNotFoundException{
+
+        groupSettings = new Group();
+        FileInputStream inputLeaderBoard = new FileInputStream("src/Images/Button/button_leaderboard.png");
+        Image buttonLeaderBoard = new Image(inputLeaderBoard,340,340,true,false);
+        ImageView buttonLeaderBoardView = new ImageView(buttonLeaderBoard);
+
+        FileInputStream innputBack = new FileInputStream("src/Images/Button/button_back.png");
+        Image buttonBack = new Image(innputBack,150,150,true,false);
+        ImageView buttonBackView = new ImageView(buttonBack);
+
+
+        Text rules = new Text("Les règles du jeux sont les suivantes");
+        VBox vboxSettings = new VBox(buttonLeaderBoardView, rules);
+        vboxSettings.setLayoutX(400);
+        vboxSettings.setLayoutY(200);
+        vboxSettings.setSpacing(10);
+        groupSettings.getChildren().add(vboxSettings);
+        groupSettings.getChildren().add(buttonBackView);
+
+        buttonBackView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+               primaryStage.setScene(sceneMenu);
+               explosion.play();
+            }
+        });
+        buttonBackView.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                musicHover();
+            }
+        });
+        buttonLeaderBoardView.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                musicHover();
+            }
+        });
+        buttonLeaderBoardView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+
+                getHighScore();
+
+
+
+            }
+        });
+
+
+        return groupSettings;
+    }
+    public void getHighScore(){
+
+        Group getHighScoreGroup = new Group();
+        Scene getHighScoreScene = new Scene(getHighScoreGroup, WIDTH,HEIGHT,Color.GRAY);
+        VBox vboxGetHighScore = new VBox();
+        Text highScoreText = new Text();
+
+
+
+
+
+        try{
+
+            FileInputStream innputBack = new FileInputStream("src/Images/Button/button_back.png");
+            Image buttonBack = new Image(innputBack,150,150,true,false);
+            ImageView buttonBackView = new ImageView(buttonBack);
+
+
+
+
+            fileReader = new FileReader("highscore.json");
+            BufferedReader br = new BufferedReader(fileReader);
+            if(br.readLine() == null){
+                highScoreText = new Text("Il y a actuellement aucune donnée enregistré ");
+                highScoreText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+
+
+                vboxGetHighScore = new VBox(highScoreText);
+            }else{
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader("highscore.json"));
+                String value = (String) jsonObject.get("score");
+                String valueName = (String) jsonObject.get("name");
+                highScoreText = new Text("Meilleur Score : ");
+                Text highScoreNameText = new Text(" name : " + valueName + "\n" + "score : " + value);
+                highScoreNameText.setFont(Font.font("verdana", FontPosture.REGULAR, 40));
+                highScoreText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+                vboxGetHighScore = new VBox(highScoreText,highScoreNameText);
+
+            }
+            buttonBackView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent event) {
+                    if(isGameOver=true){
+                        explosion.play();
+                        primaryStage.setScene(sceneMenu);
+
+
+
+                        isGameOver=false;
+                    }else{
+                        primaryStage.setScene(sceneSetting);
+
+                    }
+
+
+
+
+                }
+            });
+            buttonBackView.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent event) {
+
+                    musicHover();
+                }
+            });
+            vboxGetHighScore.setLayoutX(400);
+            vboxGetHighScore.setLayoutY(200);
+            vboxGetHighScore.setSpacing(5);
+            getHighScoreGroup.getChildren().add(vboxGetHighScore);
+            getHighScoreGroup.getChildren().add(buttonBackView);
+            primaryStage.setScene(getHighScoreScene);
+
+
+        }catch (IOException e){
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private Scene buttonPause() throws FileNotFoundException{
@@ -521,8 +742,11 @@ public class HelloApplication extends Application {
             public void handle(MouseEvent event) {
 
                 primaryStage.setScene(sceneGame);
+
                 tl.play();
+
                 gamePaused = false;
+
             }
         });
 
@@ -539,6 +763,30 @@ public class HelloApplication extends Application {
             }
         });
 
+        buttonRestartView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                try {
+                    restart=1;
+
+
+                    start(primaryStage);
+                    primaryStage.setScene(sceneGame);
+
+                    groupGame = initializeGroupGame();
+
+                }catch (IOException e){
+                    System.out.println("erreur");
+
+                }
+
+
+
+
+            }
+        });
+
 
 
 
@@ -549,6 +797,10 @@ public class HelloApplication extends Application {
     private Group buttonMenu() throws FileNotFoundException{
 
         groupMenu = new Group();
+        nameArea = new TextArea();
+        nameArea.setPrefWidth(100);
+        nameArea.setPrefHeight(50);
+        explosion.play();
         FileInputStream inputPlay = new FileInputStream("src/Images/Button/button_play.png");
         Image buttonPlay = new Image(inputPlay,340,340,true,false);
         ImageView buttonPlayView = new ImageView(buttonPlay);
@@ -564,7 +816,7 @@ public class HelloApplication extends Application {
         ImageView buttonExitView = new ImageView(buttonExit);
         buttonExitView.setEffect(reflection);
 
-        VBox vboxButton = new VBox(buttonPlayView,buttonSettingView,buttonExitView);
+        VBox vboxButton = new VBox(nameArea,buttonPlayView,buttonSettingView,buttonExitView);
         vboxButton.setPrefSize(10,10);
         groupMenu.getChildren().add(vboxButton);
         groupMenu.setLayoutX(370);
@@ -585,6 +837,34 @@ public class HelloApplication extends Application {
                 event.consume();
             }
         });
+        buttonSettingView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                explosion.stop();
+
+                try{
+                    buttonSetting();
+                    sceneSetting = new Scene(groupSettings, WIDTH,HEIGHT,Color.GRAY);
+                    primaryStage.setScene(sceneSetting);
+
+
+                    event.consume();
+
+                }catch (IOException e){
+                    System.out.println("eereru" + e);
+
+
+                }
+
+
+
+
+
+
+            }
+        });
+
         buttonExitView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
             @Override
@@ -620,6 +900,81 @@ public class HelloApplication extends Application {
 
 
         return groupMenu;
+    }
+    private void gameOver(){
+        tl.stop();
+        isGameOver =true;
+        Group gameOverGroup = new Group();
+        Scene gameOverScene = new Scene(gameOverGroup,WIDTH,HEIGHT,Color.GRAY);
+        ImageView gameOverView = new ImageView();
+        Text text = new Text("Appuyez n'importe où sur l'écran pour afficher le meilleur score");
+
+        text.setFont(Font.font("verdana", FontPosture.REGULAR, 20));
+
+        try{
+             gameOverView = new ImageView(new Image(new FileInputStream("src/Images/Misc/GameOver.png")));
+
+            gameOverGroup.getChildren().add(gameOverView);
+            gameOverScene.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    getHighScore();
+                }
+            });
+
+
+        }catch (IOException e){
+
+        }
+        VBox gameOverVbox = new VBox(gameOverView);
+        gameOverVbox.setLayoutX(25);
+        gameOverVbox.setLayoutY(200);
+        gameOverVbox.setSpacing(50);
+        gameOverGroup.getChildren().add(gameOverVbox);
+        text.setX(250);
+        text.setY(500);
+        gameOverGroup.getChildren().add(text);
+        primaryStage.setScene(gameOverScene);
+
+
+    }
+    private  void Win(){
+        tl.stop();
+        scoreFinal = score/(seconde*0.001);
+
+        pseudoPlayer = nameArea.getText();
+        Group winGroup = new Group();
+        Scene winScene = new Scene(winGroup,WIDTH,HEIGHT,Color.GRAY);
+        ImageView winView = new ImageView();
+        Text text = new Text("Bien joué " +pseudoPlayer + " Votre score est "+scoreFinal.intValue() + "\n" + "\n" +"Appuyez n'importe où sur l'écran pour afficher le meilleur score");
+        text.setTextAlignment(TextAlignment.CENTER);
+        text.setFont(Font.font("verdana", FontPosture.REGULAR, 20));
+
+        try{
+
+            winView = new ImageView(new Image(new FileInputStream("src/Images/Misc/YouWin.png"),500,500,true,false));
+            winView.setX(275);
+
+
+            winGroup.getChildren().add(winView);
+            winScene.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    highScore();
+                }
+            });
+
+
+        }catch (IOException e){
+
+        }
+
+
+        text.setX(250);
+        text.setY(500);
+        winGroup.getChildren().add(text);
+        primaryStage.setScene(winScene);
+
     }
     private void runCoin(){
 
@@ -709,7 +1064,7 @@ public class HelloApplication extends Application {
     }
     private void runbombe(){
 
-            //musicExplosion();
+            musicExplosion();
             group.getChildren().remove(bombeviewgif);
             isNextPositionAWall(groupGame, listWall2,bombeviewgif);
             isEnnemyInExplosion(groupGame,listEnnemy,bombeviewgif);
@@ -717,11 +1072,15 @@ public class HelloApplication extends Application {
             isAllowedBomb =true;
 
     }
+    private void runInvincible(){
+
+        isInvincible =false;
+        bomberman.setEffect(null);
+
+
+    }
 
     private void isEnnemyInExplosion(Group group, List<Circle> listEnnemy, ImageView bombeviewgif){
-
-
-
 
         Circle ennemyTempToRemove = null;
         for (Circle ennemy : listEnnemy){
@@ -734,10 +1093,11 @@ public class HelloApplication extends Application {
                 score +=5;
                 System.out.println(listEnnemy.size());
             }
+            if(ennemyTempToRemove!=null){
+                listEnnemy.remove(ennemyTempToRemove);
+            }
         }
-        if(ennemyTempToRemove!=null){
-            listEnnemy.remove(ennemyTempToRemove);
-        }
+
 
     }
 
@@ -749,6 +1109,7 @@ public class HelloApplication extends Application {
         Random r = new Random();
         group.getChildren().remove(bombes);
         group.getChildren().remove(scores);
+        group.getChildren().remove(hearts);
 
         isNextABomb(groupGame,listBombs,bomberman);
         isNextACoin(groupGame,listBagOfCoin,bomberman);
@@ -764,6 +1125,14 @@ public class HelloApplication extends Application {
         scores.setFill(Color.WHITE);
         scores.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
         group.getChildren().add(scores);
+
+        hearts =new Text();
+        hearts.setX(960);
+        hearts.setY(250);
+        hearts.setText(String.valueOf(heartint));
+        hearts.setFill(Color.WHITE);
+        hearts.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
+        group.getChildren().add(hearts);
 
 
 
@@ -821,10 +1190,25 @@ public class HelloApplication extends Application {
 
                 }
             }
-            if(ennemy.getCenterX()==bomberman.getCenterX() & ennemy.getCenterY()==bomberman.getCenterY()){
-                //tl.pause();
-                System.out.println("Game Over");
+
+
+            if(isInvincible==false){
+
+                if(ennemy.getCenterX()==bomberman.getCenterX() & ennemy.getCenterY()==bomberman.getCenterY()){
+                    heartint -=1;
+                    bomberman.setEffect(gaussianBlur);
+                    isInvincible =true;
+
+                    invincible.play();
+                    if(heartint==0){
+                        gameOver();
+
+                    }
+
+                }
+
             }
+
         }
 
         //la on ou va mettre les ennemies et les déplacments
@@ -1110,8 +1494,62 @@ public class HelloApplication extends Application {
 
 
 
-    private Group initializeGroupGame() throws FileNotFoundException {
+    public Group initializeGroupGame() throws FileNotFoundException {
         group = new Group();
+
+        reflection = new Reflection();
+        reflection.setFraction(1);
+        gaussianBlur = new GaussianBlur();
+        music();
+
+        tl = new Timeline(new KeyFrame(Duration.millis(250), e -> run()));
+        explosion = new Timeline(new KeyFrame(Duration.millis(180),e->runexplosion()));
+        coin = new Timeline(new KeyFrame(Duration.millis(150),e->runCoin()));
+        coin.setCycleCount(Timeline.INDEFINITE);
+        explosion.setCycleCount(Timeline.INDEFINITE);
+
+        tl.setCycleCount(Timeline.INDEFINITE);
+        bombe = new Timeline(new KeyFrame(Duration.seconds(1),e->runbombe()));
+        bombe.setCycleCount(1);
+
+        invincible = new Timeline(new KeyFrame(Duration.seconds(4),e->runInvincible()));
+        invincible.setCycleCount(1);
+
+
+        timertextSeconde =new Text();
+        timertextSecondeDizaine = new Text();
+
+        inputDos = new FileInputStream("src/Images/Bomberman/bomberman_dos.png");
+        imageBack = new Image(inputDos);
+        imagePatternBack = new ImagePattern(imageBack);
+
+        inputGauche = new FileInputStream("src/Images/Bomberman/bomberman_gauche.png");
+        imageGauche = new Image(inputGauche);
+        imagePatternGauche = new ImagePattern(imageGauche);
+
+        inputDroite = new FileInputStream("src/Images/Bomberman/bomberman_droite.png");
+        imageDroite = new Image(inputDroite);
+        imagePatternDroite = new ImagePattern(imageDroite);
+
+
+        timertextMinute =new Text();
+        timertextMinuteDizaine = new Text();
+
+        timertextSeconde.setX(1000);
+        timertextSeconde.setY(45);
+
+        timertextSecondeDizaine.setX(980);
+        timertextSecondeDizaine.setY(45);
+
+        timerSeparator = new Text(":");
+        timerSeparator.setX(965);
+        timerSeparator.setY(45);
+
+        timertextMinute.setX(940);
+        timertextMinute.setY(45);
+
+        timertextMinuteDizaine.setX(920);
+        timertextMinuteDizaine.setY(45);
 
 
         //Affichage de la bombe pour savoir combien de bombes il nous reste
@@ -1137,14 +1575,6 @@ public class HelloApplication extends Application {
         heartview.setPreserveRatio(true);
         group.getChildren().add(heartview);
 
-
-        //Affichage du nombre de bombe restant
-
-
-        hearts = new Text(960,250, String.valueOf(heartint));
-        hearts.setFill(Color.WHITE);
-        hearts.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 70));
-        group.getChildren().add(hearts);
 
         //Affichage de la bombe sur le terrain
         bombegif = new Image("https://www.informatiquegifs.com/explosion/gifs-explosion-8.gif",false);
@@ -1191,6 +1621,15 @@ public class HelloApplication extends Application {
         Image ennemy6Skin = new Image(ennemyInput6);
 
         Random randomSkin = new Random();
+        Random randomMap = new Random();
+        switch(randomMap.nextInt(2)){
+            case 0:
+                tiles =map1;
+                break;
+            case 1:
+                tiles=map2;
+                break;
+        }
 
 
 
@@ -1258,6 +1697,7 @@ public class HelloApplication extends Application {
                     imagePatternFace = new ImagePattern(imageFace);
                     bomberman.setFill(imagePatternFace);
 
+
                     group.getChildren().add(bomberman);
                 }
             }
@@ -1317,6 +1757,7 @@ public class HelloApplication extends Application {
 
 
     public static void main(String[] args) {
+
         launch();
     }
 }

@@ -580,11 +580,25 @@ public class HelloApplication extends Application {
         ImageView buttonBackView = new ImageView(buttonBack);
 
 
-        Text rules = new Text("Les règles du jeux sont les suivantes");
-        VBox vboxSettings = new VBox(buttonLeaderBoardView, rules);
+        Text rules = new Text("" +
+                "Le but du jeu est de tuer tous les ennemis le plus rapidement possible. Pour cela vous \n" +
+                "commencez la partie avec 9 bombes et 3 vies. Chaque fois que vous vous faites toucher\n" +
+                "par un ennemi vous perdez une vie et vous êtes invincibles pendant 4 secondes. Vous \n" +
+                "pouvez récupérer sur la map des bombes (chaque bombe récupérée vous donne 9 bombes) \n" +
+                "et des pièces (chaque sac vous donne 10 pièces). \n \n" +
+                "Chaque fois que vous tuez un monstre vous gagnez 5 pièces et dès que vous cassez un \n " +
+                "mur vous en gagnez 3. Les murs cassables sont ceux en briques, vous pouvez poser une \n" +
+                "bombe seulement toutes les 4 secondes.  Pour vous déplacer utiliser Z,Q,S,D, \n" +
+                "pour poser une bombe B et pour mettre en pause P. A la fin de la partie votre \n" +
+                "score est calculé sur la base de votre score par rapport au temps multiplié par 0.001.");
+        rules.setFont(Font.font("verdana", FontPosture.REGULAR, 23));
+        rules.setTextAlignment(TextAlignment.CENTER);
+        rules.setY(350);
+        VBox vboxSettings = new VBox(buttonLeaderBoardView);
         vboxSettings.setLayoutX(400);
         vboxSettings.setLayoutY(200);
         vboxSettings.setSpacing(10);
+        groupSettings.getChildren().add(rules);
         groupSettings.getChildren().add(vboxSettings);
         groupSettings.getChildren().add(buttonBackView);
 
@@ -797,13 +811,20 @@ public class HelloApplication extends Application {
     private Group buttonMenu() throws FileNotFoundException{
 
         groupMenu = new Group();
+
         nameArea = new TextArea();
         nameArea.setPrefWidth(100);
         nameArea.setPrefHeight(50);
+
+
+
+
+
         explosion.play();
         FileInputStream inputPlay = new FileInputStream("src/Images/Button/button_play.png");
         Image buttonPlay = new Image(inputPlay,340,340,true,false);
         ImageView buttonPlayView = new ImageView(buttonPlay);
+
 
 
         FileInputStream inputSetting = new FileInputStream("src/Images/Button/button_settings.png");

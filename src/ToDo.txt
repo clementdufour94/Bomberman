@@ -1,7 +1,0 @@
--Décrémentation du nombre de nombe.
--Décrémentation du nombre de coeurs.
--Skin Ennemies
--Music
--Restart(Pas sur de pouvoir le faire)
--Règles
--Incrémentation du score

@@ -361,8 +361,8 @@ public class HelloApplication extends Application {
 
         for(ImageView bombe : listBombs){
             if(bomberman.getCenterX()+bomberman.getRadius()==bombe.getX() && bomberman.getCenterY()+bomberman.getRadius()==bombe.getY()
-            || bomberman.getCenterX()+bomberman.getRadius()+40>=bombe.getX() && bombe.getX()>=bomberman.getCenterX()-bomberman.getRadius()-40
-            && bomberman.getCenterY()+bomberman.getRadius()+40>=bombe.getY() && bombe.getY()>=bomberman.getCenterY()-bomberman.getRadius()-40)
+            || bomberman.getCenterX()+bomberman.getRadius()+10>=bombe.getX() && bombe.getX()>=bomberman.getCenterX()-bomberman.getRadius()-10
+            && bomberman.getCenterY()+bomberman.getRadius()+10>=bombe.getY() && bombe.getY()>=bomberman.getCenterY()-bomberman.getRadius()-10)
             {
                 bombTempToRemove = bombe;
                 group.getChildren().remove(bombe);
@@ -383,8 +383,8 @@ public class HelloApplication extends Application {
 
         for(ImageView coin : listBagOfCoin){
             if(bomberman.getCenterX()+bomberman.getRadius()==coin.getX() && bomberman.getCenterY()+bomberman.getRadius()==coin.getY()
-                    || bomberman.getCenterX()+bomberman.getRadius()+40>=coin.getX() && coin.getX()>=bomberman.getCenterX()-bomberman.getRadius()-40
-                    && bomberman.getCenterY()+bomberman.getRadius()+40>=coin.getY() && coin.getY()>=bomberman.getCenterY()-bomberman.getRadius()-40)
+                    || bomberman.getCenterX()+bomberman.getRadius()+10>=coin.getX() && coin.getX()>=bomberman.getCenterX()-bomberman.getRadius()-10
+                    && bomberman.getCenterY()+bomberman.getRadius()+10>=coin.getY() && coin.getY()>=bomberman.getCenterY()-bomberman.getRadius()-10)
             {
                 bagTempToRemove = coin;
                 group.getChildren().remove(coin);
@@ -1416,7 +1416,7 @@ public class HelloApplication extends Application {
                         }
                     }
                     if(isMouvOk) {
-                        if (bomberman.getCenterY() >= HEIGHT) {
+                        if (bomberman.getCenterY() >= 790) {
                             bomberman.setCenterY(HEIGHT - bomberman.getRadius());
                         }
 

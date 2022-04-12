@@ -1284,17 +1284,9 @@ public class HelloApplication extends Application {
         timertextSeconde = new Text();
         timertextSecondeDizaine = new Text();
 
-        inputDos = new FileInputStream("src/Images/Bomberman/bomberman_dos.png");
-        imageBack = new Image(inputDos);
-        imagePatternBack = new ImagePattern(imageBack);
-
-        inputGauche = new FileInputStream("src/Images/Bomberman/bomberman_gauche.png");
-        imageGauche = new Image(inputGauche);
-        imagePatternGauche = new ImagePattern(imageGauche);
-
-        inputDroite = new FileInputStream("src/Images/Bomberman/bomberman_droite.png");
-        imageDroite = new Image(inputDroite);
-        imagePatternDroite = new ImagePattern(imageDroite);
+        imagePatternBack = new ImagePattern(new Image(new FileInputStream("src/Images/Bomberman/bomberman_dos.png")));
+        imagePatternGauche = new ImagePattern(new Image(new FileInputStream("src/Images/Bomberman/bomberman_dos.png")));
+        imagePatternDroite = new ImagePattern(new Image(new FileInputStream("src/Images/Bomberman/bomberman_droite.png")));
 
         timertextMinute = new Text();
         timertextMinuteDizaine = new Text();

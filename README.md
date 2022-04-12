@@ -13,6 +13,10 @@ Le jeu est fonctionnel et nécessite les librairies "Media" et "JsonSimple". Le 
 - Utilisation d'un pseudo
 - Option "Restart" -> l'option restart est casi fonctionnel, le jeu tourne mais l'affichage ne suit pas, nous vous recommandons pour le moment de relancer manuellement l'application pour relancer une partie.
 
+## Génération des maps
+
+![Map](https://drive.google.com/drive/u/0/folders/1pLhlxDzqbakTUUPPZmA45mexJWWhCrzX)
+
 ## Démarrage du jeu
 
 Lors du lancement, vous serez invité à entrer votre pseudo, entrez-le puis profitez de la partie !

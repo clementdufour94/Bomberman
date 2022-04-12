@@ -15,7 +15,7 @@ Le jeu est fonctionnel et nécessite les librairies "Media" et "JsonSimple". Le 
 
 ## Génération des maps
 
-![Map](https://drive.google.com/drive/u/0/folders/1pLhlxDzqbakTUUPPZmA45mexJWWhCrzX)
+https://drive.google.com/drive/u/0/folders/1pLhlxDzqbakTUUPPZmA45mexJWWhCrzX
 
 ## Démarrage du jeu
 
